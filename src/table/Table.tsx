@@ -26,6 +26,8 @@ import { createEvent } from 'solid-events'
 import { TextContent } from './CellContent'
 import './Table.css'
 
+const DEFAULT_COLUMN_SIZE = 200
+
 export interface TableProps<K = string> {
   /** The columns. */
   columns: Column<K>[]
@@ -45,6 +47,8 @@ export interface TableProps<K = string> {
   getCellValue(row: number, column: Column<K>): unknown
   /** Sets the value of the given cell. */
   setCellValue?: (rowIdx: number, colId: K, value: unknown) => void
+  /** Gets the width of the given column. */
+  getColumnSize?: (colId: K) => number | null | undefined
   /** Sets or resets the width of the given column. If `width` is `null`, this indicates a size reset. */
   setColumnSize?: (colId: K, width: number | null) => void
   /** Sets the name of the given column. */
@@ -209,7 +213,8 @@ export default function Table<K = string>(props: TableProps<K>) {
 
     let x = headerWidth
     const columns = props.columns.map(column => {
-      const width = Math.round(column.width * dpr) / dpr
+      const rawWidth = props.getColumnSize?.(column.id) ?? DEFAULT_COLUMN_SIZE
+      const width = Math.round(rawWidth * dpr) / dpr
       const [left, right] = [x, x + width]
       x += width
       return { left, right, width }

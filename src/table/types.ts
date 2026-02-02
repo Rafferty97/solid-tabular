@@ -5,7 +5,6 @@ import { IconProps } from 'src/components/icon'
 export type Column<K = string> = {
   id: K
   name: string
-  width: number
   format?: CellFormat
   component?: Component<CellContentProps>
   icon?: Component<IconProps>

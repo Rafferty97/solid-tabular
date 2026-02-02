@@ -1,9 +1,30 @@
-.resizebar > div {
-  opacity: 0;
-  transition: opacity 0.15s;
-}
+[data-solid-tabular-resize-bar] {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 
-.resizebar:hover > div,
-.resizebar > div.resizing {
-  opacity: 1;
+  &.horizontal {
+    right: 0;
+    left: 0;
+    cursor: ns-resize;
+  }
+
+  &.vertical {
+    top: 0;
+    bottom: 0;
+    cursor: ew-resize;
+  }
+
+  > div {
+    opacity: 0;
+    transition: opacity 0.15s;
+    background-color: var(--solid-tabular-outline-color, black);
+  }
+
+  &:hover > div,
+  > div.resizing {
+    opacity: 1;
+  }
 }

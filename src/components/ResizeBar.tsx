@@ -61,17 +61,14 @@ export default function ResizeBar(props: ResizeBarProps) {
 
   return (
     <div
-      class={cn(
-        props.class,
-        'resizebar z-10 flex items-center justify-center select-none',
-        props.horiz ? 'right-0 left-0 cursor-ns-resize' : 'top-0 bottom-0 cursor-ew-resize',
-      )}
+      data-solid-tabular-resize-bar
+      class={cn(props.class, 'resizebar', props.horiz ? 'horizontal' : 'vertical')}
       style={props.style}
       onMouseDown={startResize}
       onDblClick={props.resetSize}
     >
       <div
-        class={`bg-primary-600 ${resizing() ? 'resizing' : ''}`}
+        class={resizing() ? 'resizing' : ''}
         style={{
           [props.horiz ? 'height' : 'width']: `${3 * px()}px`,
           [props.horiz ? 'width' : 'height']: 'calc(100% - 4px)',
