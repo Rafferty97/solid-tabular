@@ -121,10 +121,8 @@ export default function Table<K = string>(props: TableProps<K>) {
   // Details about the active cell
   const activeCellData = createMemo(
     () => {
-      const cell = activeCell()
-      if (!cell) return undefined
-      const rowIdx = cell[0]
-      const column = props.columns[cell[1]]
+      const [rowIdx, colIdx] = activeCell()
+      const column = props.columns[colIdx]
       if (rowIdx >= props.numRows || !column) return undefined
       return { rowIdx, column }
     },
@@ -420,8 +418,6 @@ export default function Table<K = string>(props: TableProps<K>) {
     ev?.preventDefault()
 
     const range = activeRange()
-    if (!range) return
-
     props.onCopy?.(range.min, range.max)
   }
 
@@ -430,8 +426,6 @@ export default function Table<K = string>(props: TableProps<K>) {
     if (!props.rowsEditable) return
 
     const range = activeRange()
-    if (!range) return
-
     props.onPaste?.(range.min, range.max)
   }
 
@@ -439,16 +433,12 @@ export default function Table<K = string>(props: TableProps<K>) {
     if (!props.rowsEditable) return
 
     const range = activeRange()
-    if (!range) return
-
     props.onClear?.(range.min, range.max)
   }
 
   // Handle keyboard events
   const handleKeyDown = (ev: KeyboardEvent) => {
-    const focusedRange_ = activeRange()
-    if (!focusedRange_) return
-    const { cell, shiftCell, min, max } = focusedRange_
+    const { cell, shiftCell, min, max } = activeRange()
 
     const delta = ev[modifierKey] ? Infinity : 1
 
@@ -494,8 +484,7 @@ export default function Table<K = string>(props: TableProps<K>) {
     }
 
     if (isPrintableKey(ev) || ev.key === 'Backspace') {
-      const cell = activeCell()
-      if (cell && !props.columns[cell[1]]?.readonly) {
+      if (!props.columns[activeCell()[1]]?.readonly) {
         quickEditCell()
       } else {
         ev.preventDefault()
@@ -542,13 +531,11 @@ export default function Table<K = string>(props: TableProps<K>) {
   // Monitor scroll position
   const cellIntersectsLeft = createMemo(() => {
     const outline = activeRangeOutline()
-    if (!outline) return false
     const x = viewport().left + rowHeaderWidth() - outline.left
     return x >= 0 && x <= outline.width
   })
   const cellIntersectsTop = createMemo(() => {
     const outline = activeRangeOutline()
-    if (!outline) return false
     const y = viewport().top + colHeaderHeight() - outline.top
     return y >= 0 && y <= outline.height
   })

@@ -1,9 +1,8 @@
 .App {
   text-align: center;
   height: 600px;
-
-  /* --solid-tabular-outline-color: red; */
   font-size: 14px;
+  --solid-tabular-outline-color: oklch(60% 0.118 184.704);
 }
 
 .logo {
