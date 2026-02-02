@@ -12,8 +12,6 @@ export interface RenameableProps {
   allowEmpty?: boolean
   editOnDblClick?: boolean
   blur?: () => void
-  small?: boolean
-  terse?: boolean
 }
 
 export function Renameable(props: RenameableProps) {
@@ -93,8 +91,8 @@ export function Renameable(props: RenameableProps) {
 
   return (
     <div
-      data-renameable-group
-      class={cn({ terse: props.terse }, props.class)}
+      data-solid-tabular-renameable
+      class={props.class}
       onPointerDown={ev => value() != null && ev.stopPropagation()}
       onClick={ev => ev.stopPropagation()}
       onDblClick={handleDblClick}
@@ -103,33 +101,11 @@ export function Renameable(props: RenameableProps) {
       <div class={cn({ empty: !props.value.length })} title={shownValue()}>
         {shownValue()}
       </div>
-      <Show when={value() != null && !props.terse}>
-        <div
-          class="absolute top-0 right-0 bottom-0 flex cursor-pointer items-center"
-          onPointerDown={ev => {
-            ev.preventDefault()
-            cancelRename()
-          }}
-        >
-          <FiX class="ml-1 text-gray-700" size={props.small ? 12 : 16} />
-        </div>
-      </Show>
-      <Show when={value() == null && !props.terse}>
-        <div
-          class={cn(
-            'absolute top-0 right-0 bottom-0 flex items-center text-gray-400 transition-opacity hover:text-gray-700',
-            { 'cursor-pointer': !props.disabled, 'renameable-edit-btn': props.value.length },
-          )}
-          onPointerDown={handleClickEdit}
-        >
-          <FiEdit2 class="ml-1" size={props.small ? 12 : 16} />
-        </div>
-      </Show>
       <input
         ref={inputEl}
         name="input"
         tabIndex={-1}
-        class={cn({ small: props.small, terse: props.terse, show: value() != null })}
+        class={cn({ show: value() != null })}
         placeholder={props.placeholder}
         onKeyDown={handleKeyDown}
         onInput={handleInput}

@@ -1,12 +1,8 @@
-[data-renameable-group] {
+[data-solid-tabular-renameable] {
   position: relative;
   text-wrap: nowrap;
   outline: none;
-  padding-right: 0.75rem;
-
-  .terse {
-    padding-right: 0;
-  }
+  padding: 0;
 
   > :first-child {
     overflow: hidden;
@@ -19,46 +15,71 @@
     }
   }
 
+  .cancel-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+
+    svg {
+      margin-left: 0.25rem;
+      color: rgb(55, 65, 81); /* gray-700 */
+    }
+  }
+
+  .edit-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    color: oklch(70.7% 0.022 261.325); /* gray-400 */
+    transition: opacity 0.15s;
+
+    &.clickable {
+      cursor: pointer;
+    }
+
+    &:hover {
+      color: rgb(55, 65, 81); /* gray-700 */
+    }
+
+    svg {
+      margin-left: 0.25rem;
+    }
+  }
+
   .renameable-edit-btn {
-    opacity: 0%;
+    opacity: 0;
   }
 
   &:hover .renameable-edit-btn {
-    opacity: 100%;
+    opacity: 1;
   }
 
   input {
-    /* class={cn(
-      'absolute w-0',
-      props.small ? '-inset-0.5' : '-inset-1',
-      !props.terse && 'right-5',
-      value() != null && 'w-auto rounded bg-white p-1',
-      value() != null && (!props.terse ? 'outline outline-gray-300' : 'outline-none'),
-    )} */
     position: absolute;
+    display: block;
     width: 0;
-    inset: 0.25rem;
-    right: 1.25rem;
+    top: -0.25rem;
+    left: -0.25rem;
+    bottom: -0.25rem;
+    right: -0.25rem;
+    padding: 0;
+    margin: 0;
     border: none;
-
-    &.small {
-      inset: -0.125rem;
-    }
-
-    &.terse {
-      right: 0;
-    }
+    font: inherit;
+    outline: none;
 
     &.show {
       width: auto;
       border-radius: 4px;
       background-color: white;
       padding: 0.25rem;
-      outline: oklch(87.2% 0.01 258.338);
-
-      &.terse {
-        outline: none;
-      }
     }
   }
 }

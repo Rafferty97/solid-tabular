@@ -97,11 +97,10 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
     >
       <div data-ext-active={props.extActive}>
         <Renameable
-          class="min-w-0 text-sm font-bold"
+          class="renameable"
           value={props.column.name}
           setValue={name => props.setColumnName?.(props.column.id, name)}
           disabled={!props.columnsEditable}
-          terse
         />
         <div class="flex-1" />
         <Dynamic component={props.column.icon} size={12} />

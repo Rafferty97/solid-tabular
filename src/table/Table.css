@@ -59,6 +59,11 @@
       gap: 0.25rem;
       padding: 0.25rem;
     }
+
+    .renameable {
+      min-width: 0;
+      font-weight: bold;
+    }
   }
 
   .add-column-btn {
