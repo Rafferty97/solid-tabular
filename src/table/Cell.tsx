@@ -3,8 +3,6 @@ import { Dynamic } from 'solid-js/web'
 import { Handler } from 'solid-events'
 import { CellContentProps, CellFormat } from './CellContent'
 import { Rect } from '../lib/rect'
-import { cn } from 'src/lib/utils'
-import './Cell.css'
 
 export interface CellProps {
   component: Component<CellContentProps>
@@ -36,17 +34,8 @@ export function Cell(props: CellProps) {
   const isNull = () => value() === null
 
   return (
-    <div
-      ref={containerEl}
-      class={cn('cell relative flex h-full items-center text-sm outline-none', {
-        'bg-cyan-600/6': props.extActive,
-      })}
-      tabIndex={-1}
-    >
-      <Show
-        when={!isNull()}
-        fallback={<span class="w-full rounded text-center text-xs text-gray-300 italic">NULL</span>}
-      >
+    <div ref={containerEl} class="cell" data-ext-active={props.extActive} tabIndex={-1}>
+      <Show when={!isNull()} fallback={<span class="null">NULL</span>}>
         <Dynamic
           component={props.component}
           value={value()}
@@ -85,7 +74,7 @@ export function CellInput(props: CellInputProps) {
     if (ev.key === 'Tab' || ev.key === 'Enter') {
       return
     }
-    if (quickMode && ev.key?.startsWith('Arrow')) {
+    if (quickMode && ev.key.startsWith('Arrow')) {
       return
     }
 
@@ -101,13 +90,11 @@ export function CellInput(props: CellInputProps) {
   }
 
   return (
-    <div class="cell-input pointer-events-auto">
+    <div class="cell-input">
       <input
         ref={inputEl}
-        name="cellinput"
-        class={cn('inset-0 block bg-white p-1 text-sm outline-none', {
-          'text-right': props.format.align === 'right',
-        })}
+        // name="cellinput"
+        style={{ 'text-align': props.format.align }}
         value={value()}
         onChange={ev => props.setValue(ev.currentTarget.value)}
         onKeyDown={handleInputKeyDown}
@@ -135,7 +122,7 @@ export interface CellInputContainerProps {
 export function CellInputContainer(props: CellInputContainerProps) {
   return (
     <div
-      class="pointer-events-none absolute border border-transparent"
+      class="cell-input-container"
       style={{
         left: `${props.rect.left}px`,
         top: `${props.rect.top}px`,
@@ -146,7 +133,7 @@ export function CellInputContainer(props: CellInputContainerProps) {
       <CellInput
         format={props.format}
         value={props.value}
-        setValue={value => props.setCellValue?.(value)}
+        setValue={value => props.setCellValue(value)}
         readonly={props.readonly}
         onFinishedEditing={props.onFinishedEditing}
         focus={props.focus}

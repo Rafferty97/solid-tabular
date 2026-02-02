@@ -25,7 +25,7 @@ export function TableRow<K>(props: TableRowProps<K>) {
       <For each={props.columns}>
         {col => (
           <div
-            class="row-cell absolute top-0 left-0 cursor-cell border-t border-l border-gray-300"
+            class="row-cell"
             style={{
               width: `${col.width}px`,
               height: `${props.height}px`,
@@ -33,12 +33,12 @@ export function TableRow<K>(props: TableRowProps<K>) {
               'z-index': Z_INDEX.CELL,
             }}
             onMouseDown={ev => {
-              if (ev.button === 0) props.onMouseDown?.(ev, props.rowIdx, col.index)
+              if (ev.button === 0) props.onMouseDown(ev, props.rowIdx, col.index)
               if (ev.button === 2) props.onMouseContextDown?.(ev, props.rowIdx, col.index)
             }}
             onContextMenu={ev => props.onContextMenu?.(ev, props.rowIdx, col.index)}
           >
-            <Cell
+            {/* <Cell
               component={col.component ?? TextContent}
               format={col.format ?? {}}
               editable={col.readonly !== true}
@@ -46,7 +46,7 @@ export function TableRow<K>(props: TableRowProps<K>) {
               setValue={value => props.setCellValue?.(props.rowIdx, col.id, value)}
               onEdit={props.onEditCell}
               extActive={col.id === props.extActiveColumn}
-            />
+            /> */}
           </div>
         )}
       </For>

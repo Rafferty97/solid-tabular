@@ -1,23 +1,181 @@
-.row .row-cell,
-.row .row-header {
-  background: white;
-}
+[data-solid-tabular-table] {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  contain: strict;
+  outline: none;
+  user-select: none;
+  background-color: oklch(92.8% 0.006 264.531); /* gray-200 */
+  text-align: left;
 
-.row:hover .row-cell,
-.row:hover .row-header,
-.data-table:focus-within .row.active .row-cell,
-.data-table:focus-within .row.active .row-header {
-  background: rgb(243, 245, 247);
-}
+  * {
+    box-sizing: border-box;
+  }
 
-.cell-outline {
-  --tw-shadow-color: var(--color-gray-400);
-}
+  .focus-proxy {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
 
-.data-table:focus-within .cell-outline {
-  --tw-shadow-color: var(--color-teal-600);
-}
+  .corner-box {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 0;
 
-.data-table:focus-within .cell-outline.shade {
-  background: rgba(0, 0, 0, 0.1);
+    > :first-child {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      border-right: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+      border-bottom: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+      background-color: white;
+      padding: 0.25rem 0.5rem 0.25rem 0;
+      color: oklch(70.7% 0.022 261.325); /* gray-400 */
+      /* text-xs */
+    }
+  }
+
+  .column-headers {
+    position: sticky;
+    top: 0;
+    height: 0;
+  }
+
+  .column-header {
+    position: absolute;
+    top: 0;
+    border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    border-bottom: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    background-color: white;
+
+    > :first-child {
+      position: absolute;
+      display: flex;
+      inset: 0;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem;
+    }
+  }
+
+  .add-column-btn {
+    position: absolute;
+    top: 0;
+    z-index: -999;
+    cursor: pointer;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+      border-top: none;
+      background-color: white;
+      padding: 0.25rem 0;
+
+      &:hover {
+        background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
+      }
+    }
+  }
+
+  .row-headers {
+    position: sticky;
+    left: 0;
+    height: 0;
+  }
+
+  .row-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    border-right: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    background-color: white;
+    padding: 0.25rem 0.5rem 0.25rem 0;
+    color: oklch(70.7% 0.022 261.325); /* gray-400 */
+    /* text-xs */
+  }
+
+  .row .row-cell,
+  .row .row-header {
+    background: white;
+  }
+
+  .row:hover .row-cell,
+  .row:hover .row-header,
+  .data-table:focus-within .row.active .row-cell,
+  .data-table:focus-within .row.active .row-header {
+    background: rgb(243, 245, 247);
+  }
+
+  .row-cell {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: cell;
+    border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+  }
+
+  .cell {
+    position: relative;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    outline: none;
+    /* text-sm */
+
+    .null {
+      width: 100%;
+      text-align: center;
+      font-style: italic;
+      color: oklch(87.2% 0.01 258.338); /* gray-300 */
+    }
+  }
+
+  .cell-input-container {
+    position: absolute;
+    border: 1px solid transparent;
+    pointer-events: none;
+  }
+
+  .cell-input {
+    overflow: hidden;
+    height: 0;
+    pointer-events: auto;
+
+    input {
+      display: block;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: white;
+      padding: 0.25rem;
+      outline: none;
+      /* text-sm */
+    }
+
+    input:focus {
+      position: absolute;
+    }
+  }
+
+  .cell-outline {
+    position: absolute;
+    overflow: hidden;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  &:focus-within .cell-outline.shade {
+    background: rgba(0, 0, 0, 0.1);
+  }
 }

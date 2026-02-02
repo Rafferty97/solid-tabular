@@ -1,7 +1,64 @@
-.renameable-edit-btn {
-  opacity: 0%;
-}
+[data-renameable-group] {
+  position: relative;
+  text-wrap: nowrap;
+  outline: none;
+  padding-right: 0.75rem;
 
-[data-renameable-group]:hover .renameable-edit-btn {
-  opacity: 100%;
+  .terse {
+    padding-right: 0;
+  }
+
+  > :first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+    user-select: none;
+
+    &.empty {
+      color: oklch(70.7% 0.022 261.325); /* gray-400 */
+    }
+  }
+
+  .renameable-edit-btn {
+    opacity: 0%;
+  }
+
+  &:hover .renameable-edit-btn {
+    opacity: 100%;
+  }
+
+  input {
+    /* class={cn(
+      'absolute w-0',
+      props.small ? '-inset-0.5' : '-inset-1',
+      !props.terse && 'right-5',
+      value() != null && 'w-auto rounded bg-white p-1',
+      value() != null && (!props.terse ? 'outline outline-gray-300' : 'outline-none'),
+    )} */
+    position: absolute;
+    width: 0;
+    inset: 0.25rem;
+    right: 1.25rem;
+    border: none;
+
+    &.small {
+      inset: -0.125rem;
+    }
+
+    &.terse {
+      right: 0;
+    }
+
+    &.show {
+      width: auto;
+      border-radius: 4px;
+      background-color: white;
+      padding: 0.25rem;
+      outline: oklch(87.2% 0.01 258.338);
+
+      &.terse {
+        outline: none;
+      }
+    }
+  }
 }

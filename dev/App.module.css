@@ -1,5 +1,9 @@
 .App {
   text-align: center;
+  height: 600px;
+
+  --solid-tabular-outline-color: red;
+  font-size: 14px;
 }
 
 .logo {

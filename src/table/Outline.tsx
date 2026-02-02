@@ -21,19 +21,14 @@ export function Outline(props: OutlineProps) {
   return (
     <Show when={props.rect}>
       <div
-        class={cn(
-          'cell-outline pointer-events-none absolute z-10 overflow-hidden shadow-teal-600',
-          {
-            shade: props.shade,
-          },
-        )}
+        class={cn('cell-outline', { shade: props.shade })}
         style={{
           left: `${props.headerLeft ? props.headerLeft - px(2) : props.rect!.left - expand()}px`,
           top: `${props.headerTop ? props.headerTop - px(2) : props.rect!.top - expand()}px`,
           width: `${props.headerLeft ? px(2) : props.rect!.width + expand(2)}px`,
           height: `${props.headerTop ? px(2) : props.rect!.height + expand(2)}px`,
           'box-shadow': `
-              inset 0 0 0 ${px(2)}px var(--tw-shadow-color),
+              inset 0 0 0 ${px(2)}px var(--solid-tabular-outline-color),
               inset 0 0 0 ${px(3)}px white`,
         }}
       />

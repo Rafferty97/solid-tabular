@@ -94,18 +94,13 @@ export function Renameable(props: RenameableProps) {
   return (
     <div
       data-renameable-group
-      class={cn('group relative text-nowrap outline-none', !props.terse && 'pr-6', props.class)}
+      class={cn({ terse: props.terse }, props.class)}
       onPointerDown={ev => value() != null && ev.stopPropagation()}
       onClick={ev => ev.stopPropagation()}
       onDblClick={handleDblClick}
       ref={containerEl}
     >
-      <div
-        class={cn('overflow-hidden text-ellipsis whitespace-pre select-none', {
-          'text-gray-400': !props.value.length,
-        })}
-        title={shownValue()}
-      >
+      <div class={cn({ empty: !props.value.length })} title={shownValue()}>
         {shownValue()}
       </div>
       <Show when={value() != null && !props.terse}>
@@ -134,13 +129,7 @@ export function Renameable(props: RenameableProps) {
         ref={inputEl}
         name="input"
         tabIndex={-1}
-        class={cn(
-          'absolute w-0',
-          props.small ? '-inset-0.5' : '-inset-1',
-          !props.terse && 'right-5',
-          value() != null && 'w-auto rounded bg-white p-1',
-          value() != null && (!props.terse ? 'outline outline-gray-300' : 'outline-none'),
-        )}
+        class={cn({ small: props.small, terse: props.terse, show: value() != null })}
         placeholder={props.placeholder}
         onKeyDown={handleKeyDown}
         onInput={handleInput}

@@ -551,7 +551,7 @@ export default function Table<K = string>(props: TableProps<K>) {
   return (
     <div
       ref={tableEl}
-      class="data-table relative h-full w-full overflow-auto bg-gray-200 contain-strict outline-none select-none"
+      data-solid-tabular-table
       onKeyDown={handleKeyDown}
       onCopy={handleCopy}
       onPaste={handlePaste}
@@ -561,14 +561,11 @@ export default function Table<K = string>(props: TableProps<K>) {
       }}
       tabIndex={-1}
     >
-      <div ref={focusEl} class="absolute w-0" tabIndex={-1} contentEditable />
+      <div ref={focusEl} class="focus-proxy" tabIndex={-1} contentEditable />
 
       {/* Corner box */}
-      <div class="sticky top-0 left-0 h-0" style={{ 'z-index': Z_INDEX.CORNER_BOX }}>
-        <div
-          class="flex items-center justify-end border-r border-b border-gray-300 bg-white py-1 pr-2 text-xs text-gray-400"
-          style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}
-        >
+      <div class="corner-box" style={{ 'z-index': Z_INDEX.CORNER_BOX }}>
+        <div style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}>
           <span>#</span>
         </div>
         <Outline
@@ -581,7 +578,7 @@ export default function Table<K = string>(props: TableProps<K>) {
 
       {/* Column headers */}
       <div
-        class="sticky top-0 h-0"
+        class="column-headers"
         style={{ width: `${tableWidth()}px`, 'z-index': Z_INDEX.TABLE_HEADER }}
       >
         <TableHeader
@@ -590,14 +587,18 @@ export default function Table<K = string>(props: TableProps<K>) {
           columnsEditable={props.columnsEditable}
           onResizeColumn={props.setColumnSize}
           setColumnName={props.setColumnName}
-          removeColumn={id => props.removeColumns?.(props.columns.findIndex(c => c.id === id)!, 1)}
+          removeColumn={id =>
+            props.removeColumns?.(
+              props.columns.findIndex(c => c.id === id),
+              1,
+            )
+          }
           extActiveColumn={props.extActiveColumn}
         />
         {/* Add column button */}
         <Show when={props.columnsEditable}>
-          <div class="absolute top-0 -z-[999] cursor-pointer" style={{ left: `${tableWidth()}px` }}>
+          <div class="add-column-btn" style={{ left: `${tableWidth()}px` }}>
             <div
-              class="flex items-center justify-center border-r border-b border-l border-gray-300 bg-white py-1 hover:bg-gray-100"
               style={{ width: `80px`, height: `${colHeaderHeight()}px` }}
               onMouseDown={ev => ev.button === 0 && props.insertColumns?.(numCols(), 1)}
             >
@@ -613,11 +614,11 @@ export default function Table<K = string>(props: TableProps<K>) {
       </div>
 
       {/* Row headers */}
-      <div class="sticky left-0 h-0" style={{ 'z-index': Z_INDEX.ROW_HEADER }}>
+      <div class="row-headers" style={{ 'z-index': Z_INDEX.ROW_HEADER }}>
         <For each={rowVirtualizer.getVirtualItems()}>
           {item => (
             <div
-              class="absolute top-0 left-0 flex items-center justify-end border-t border-r border-gray-300 bg-white py-1 pr-2 text-xs text-gray-400"
+              class="row-header"
               style={{
                 width: `${rowHeaderWidth()}px`,
                 height: `${cellHeight()}px`,

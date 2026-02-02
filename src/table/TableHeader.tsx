@@ -29,8 +29,12 @@ export function TableHeader<K>(props: TableHeaderProps<K>) {
             extActive={col.id === props.extActiveColumn}
           />
           <ResizeBar
-            class="absolute top-0 z-10 -ml-[4px] w-[9px]"
             style={{
+              position: 'absolute',
+              top: '0',
+              'z-index': '10',
+              margin: '0 0 0 -4px',
+              width: '9px',
               height: `${props.height - 1}px`,
               transform: `translate(${col.right}px, 0px)`,
             }}
@@ -83,7 +87,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
 
   return (
     <div
-      class={'absolute top-0 border-b border-l border-gray-300 bg-white'}
+      class="column-header"
       style={{
         width: `${props.column.width}px`,
         height: `${props.height}px`,
@@ -91,11 +95,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
       }}
       onContextMenu={handleContextMenu}
     >
-      <div
-        class={cn('absolute inset-0 flex items-center gap-1 p-1', {
-          'bg-cyan-600/6': props.extActive,
-        })}
-      >
+      <div data-ext-active={props.extActive}>
         <Renameable
           class="min-w-0 text-sm font-bold"
           value={props.column.name}
