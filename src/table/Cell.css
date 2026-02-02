@@ -1,0 +1,8 @@
+.cell-input {
+  overflow: hidden;
+  height: 0;
+}
+
+.cell-input input:focus {
+  position: absolute;
+}

@@ -1,0 +1,23 @@
+.row .row-cell,
+.row .row-header {
+  background: white;
+}
+
+.row:hover .row-cell,
+.row:hover .row-header,
+.data-table:focus-within .row.active .row-cell,
+.data-table:focus-within .row.active .row-header {
+  background: rgb(243, 245, 247);
+}
+
+.cell-outline {
+  --tw-shadow-color: var(--color-gray-400);
+}
+
+.data-table:focus-within .cell-outline {
+  --tw-shadow-color: var(--color-teal-600);
+}
+
+.data-table:focus-within .cell-outline.shade {
+  background: rgba(0, 0, 0, 0.1);
+}

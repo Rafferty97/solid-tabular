@@ -1,0 +1,7 @@
+.renameable-edit-btn {
+  opacity: 0%;
+}
+
+[data-renameable-group]:hover .renameable-edit-btn {
+  opacity: 100%;
+}

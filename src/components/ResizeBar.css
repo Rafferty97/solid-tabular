@@ -1,0 +1,9 @@
+.resizebar > div {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.resizebar:hover > div,
+.resizebar > div.resizing {
+  opacity: 1;
+}

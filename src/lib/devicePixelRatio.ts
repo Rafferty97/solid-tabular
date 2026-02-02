@@ -1,0 +1,31 @@
+import { Accessor, createMemo, createSignal } from 'solid-js'
+
+export function getDevicePixelRatio() {
+  const ratio = window.devicePixelRatio
+  return ratio / Math.floor(ratio)
+}
+
+export const devicePixelRatio = (() => {
+  const [dpr, setDpr] = createSignal(getDevicePixelRatio())
+
+  let cleanup: (() => void) | undefined
+
+  const updatePixelRatio = () => {
+    cleanup?.()
+    setDpr(getDevicePixelRatio())
+    const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+    media.addEventListener('change', updatePixelRatio)
+    cleanup = () => media.removeEventListener('change', updatePixelRatio)
+  }
+
+  updatePixelRatio()
+
+  return dpr
+})()
+
+export function createSize(raw: Accessor<number> | number) {
+  return createMemo(() => {
+    const ratio = devicePixelRatio()
+    return Math.round((typeof raw === 'function' ? raw() : raw) * ratio) / ratio
+  })
+}

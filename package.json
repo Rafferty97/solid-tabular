@@ -83,5 +83,14 @@
   "engines": {
     "node": ">=18",
     "pnpm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@kobalte/core": "^0.13.11",
+    "@tanstack/solid-virtual": "^3.13.18",
+    "clsx": "^2.1.1",
+    "radashi": "^12.7.1",
+    "solid-events": "^0.0.6",
+    "solid-icons": "^1.2.0",
+    "tailwind-merge": "^3.4.0"
   }
 }
