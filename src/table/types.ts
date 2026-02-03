@@ -1,13 +1,12 @@
 import { Component } from 'solid-js'
 import { CellContentProps, CellFormat } from './CellContent'
-import { IconProps } from 'src/components/icon'
 
 export type Column<K = string> = {
   id: K
   name: string
   format?: CellFormat
   component?: Component<CellContentProps>
-  icon?: Component<IconProps>
+  icon?: Component
   readonly?: boolean
 }
 

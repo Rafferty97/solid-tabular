@@ -74,6 +74,7 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vite-plugin-solid": "^2.10.2",
+    "vite-tsconfig-paths": "^6.0.5",
     "vitest": "^1.6.0"
   },
   "keywords": [

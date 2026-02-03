@@ -1,11 +1,16 @@
 import { Accessor, createMemo, createSignal } from 'solid-js'
 
+const isServer = typeof window === 'undefined'
+
 export function getDevicePixelRatio() {
+  if (isServer) return 1
   const ratio = window.devicePixelRatio
   return ratio / Math.floor(ratio)
 }
 
 export const devicePixelRatio = (() => {
+  if (isServer) return () => 1
+
   const [dpr, setDpr] = createSignal(getDevicePixelRatio())
 
   let cleanup: (() => void) | undefined

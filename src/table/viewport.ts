@@ -1,7 +1,11 @@
 import { Accessor, createSignal, onCleanup, onMount } from 'solid-js'
 import { Rect } from '../lib/rect'
 
+const isServer = typeof window === 'undefined'
+
 export function watchViewport(element: () => HTMLElement): Accessor<Rect> {
+  if (isServer) return () => ({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 })
+
   const [viewport, setViewport] = createSignal({
     left: 0,
     right: window.innerWidth,
