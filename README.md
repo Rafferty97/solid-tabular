@@ -4,7 +4,10 @@
 
 # solid-tabular
 
-[![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
+[![npm version](https://img.shields.io/npm/v/solid-tabular.svg?style=flat)](https://www.npmjs.com/package/solid-tabular)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/solid-tabular?style=flat)](https://bundlephobia.com/package/solid-tabular)
+[![license](https://img.shields.io/npm/l/solid-tabular.svg?style=flat)](https://github.com/Rafferty97/solid-tabular/blob/main/LICENSE)
+[![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=flat&logo=pnpm)](https://pnpm.io/)
 
 Spreadsheet-like table UI
 

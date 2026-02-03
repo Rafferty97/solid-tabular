@@ -1,0 +1,6 @@
+- Extract out context menu
+- Extract out cell content
+- Tidy up z-index stuff
+- Tidy up CSS class names
+- Permit customisation via CSS variables
+- Remove `isEqual.ts` dependency

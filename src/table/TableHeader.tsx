@@ -3,7 +3,7 @@ import { Dynamic } from 'solid-js/web'
 import { PositionedColumn } from './types'
 import ResizeBar from 'src/components/ResizeBar'
 import { Renameable } from 'src/components/Renameable'
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/classnames'
 
 export interface TableHeaderProps<K> {
   height: number

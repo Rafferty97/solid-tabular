@@ -1,6 +1,6 @@
 import { createMemo, createSignal, Show } from 'solid-js'
 import { FiEdit2, FiX } from 'solid-icons/fi'
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/classnames'
 import './Renameable.css'
 
 export interface RenameableProps {

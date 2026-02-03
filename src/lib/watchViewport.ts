@@ -1,5 +1,5 @@
 import { Accessor, createSignal, onCleanup, onMount } from 'solid-js'
-import { Rect } from '../lib/rect'
+import { Rect } from './rect'
 
 const isServer = typeof window === 'undefined'
 

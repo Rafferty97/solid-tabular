@@ -2,7 +2,7 @@ import type { Component, ComponentProps, JSX, ValidComponent } from 'solid-js'
 import { splitProps } from 'solid-js'
 import * as ContextMenuPrimitive from '@kobalte/core/context-menu'
 import type { PolymorphicProps } from '@kobalte/core/polymorphic'
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/classnames'
 import './ContextMenu.css'
 
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger

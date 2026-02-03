@@ -1,6 +1,6 @@
 import { createEffect, createMemo, createSignal, JSX, onCleanup } from 'solid-js'
 import { devicePixelRatio } from '../lib/devicePixelRatio'
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/classnames'
 import '../components/ResizeBar.css'
 
 export interface ResizeBarProps {
