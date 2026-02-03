@@ -1,5 +1,5 @@
 import { Show } from 'solid-js'
-import { devicePixelRatio } from '../lib/devicePixelRatio'
+import { devicePixelRatio } from 'src/lib/devicePixelRatio'
 import { cn } from 'src/lib/classnames'
 
 export interface OutlineProps {

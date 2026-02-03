@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, JSX, onCleanup } from 'solid-js'
-import { devicePixelRatio } from '../lib/devicePixelRatio'
+import { devicePixelRatio } from 'src/lib/devicePixelRatio'
 import { cn } from 'src/lib/classnames'
 import '../components/ResizeBar.css'
 

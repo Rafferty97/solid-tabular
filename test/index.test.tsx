@@ -1,6 +1,6 @@
 import { createRoot } from 'solid-js'
 import { isServer } from 'solid-js/web'
-import { Table } from '../src'
+import { Table } from 'src'
 import { describe, expect, it } from 'vitest'
 
 describe('environment', () => {

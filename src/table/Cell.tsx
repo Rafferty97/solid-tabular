@@ -1,8 +1,8 @@
 import { createEffect, createMemo, createSignal, onCleanup, Show, Component } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
-import { Handler } from 'solid-events'
+import { Handler } from 'src/lib/createEvent'
 import { CellContentProps, CellFormat } from './CellContent'
-import { Rect } from '../lib/rect'
+import { Rect } from 'src/lib/rect'
 
 export interface CellProps {
   component: Component<CellContentProps>
