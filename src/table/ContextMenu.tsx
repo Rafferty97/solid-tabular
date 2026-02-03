@@ -22,7 +22,7 @@ export function CellContextMenu(props: {
   return (
     <ContextMenu>
       <ContextMenuTrigger>{props.children}</ContextMenuTrigger>
-      <ContextMenuContent class="cell-ctx-menu min-w-40">
+      <ContextMenuContent class="cell-ctx-menu">
         <ContextMenuGroup>
           <ContextMenuItem onClick={props.copy}>
             <span>Copy</span>

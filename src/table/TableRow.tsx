@@ -38,7 +38,7 @@ export function TableRow<K>(props: TableRowProps<K>) {
             }}
             onContextMenu={ev => props.onContextMenu?.(ev, props.rowIdx, col.index)}
           >
-            {/* <Cell
+            <Cell
               component={col.component ?? TextContent}
               format={col.format ?? {}}
               editable={col.readonly !== true}
@@ -46,7 +46,7 @@ export function TableRow<K>(props: TableRowProps<K>) {
               setValue={value => props.setCellValue?.(props.rowIdx, col.id, value)}
               onEdit={props.onEditCell}
               extActive={col.id === props.extActiveColumn}
-            /> */}
+            />
           </div>
         )}
       </For>

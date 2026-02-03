@@ -165,6 +165,8 @@
       background-color: white;
       padding: 0.25rem;
       outline: none;
+      border: none;
+      font: inherit;
       /* text-sm */
     }
 
@@ -234,4 +236,84 @@
       }
     }
   }
+
+  .text-content {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    padding: 0.25rem;
+    white-space: nowrap;
+
+    .text-content-inner {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+
+      &.align-right {
+        flex-direction: row-reverse;
+      }
+
+      &.align-center {
+        justify-content: center;
+      }
+    }
+  }
+
+  .checkbox-content {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .checkbox-box {
+      display: flex;
+      height: 1rem;
+      width: 1rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.125rem;
+      border-width: 1px;
+      border-style: solid;
+
+      &.checked {
+        border-color: rgb(29, 78, 216); /* blue-700 */
+        background-color: rgb(37, 99, 235); /* blue-600 */
+        color: rgb(29, 78, 216); /* blue-700 */
+      }
+
+      &.unchecked {
+        border-color: oklch(87.2% 0.01 258.338); /* gray-300 */
+        background-color: white;
+      }
+
+      &.editable {
+        cursor: pointer;
+      }
+
+      &.readonly {
+        cursor: cell;
+      }
+    }
+
+    .checkbox-icon {
+      height: 0.75rem;
+      width: 0.75rem;
+    }
+  }
+}
+
+.cell-ctx-menu {
+  min-width: 10rem;
 }
