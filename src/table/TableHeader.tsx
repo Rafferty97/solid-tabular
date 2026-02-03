@@ -8,7 +8,8 @@ export interface TableHeaderProps<K> {
   height: number
   columns: PositionedColumn<K>[]
   columnsEditable?: boolean
-  onResizeColumn?: (colId: K, width: number | null) => void
+  setColumnSize?: (colId: K, width: number) => void
+  resetColumnSize?: (colId: K) => void
   setColumnName?: (colId: K, name: string) => void
   removeColumn(colId: K): void
 }
@@ -36,8 +37,8 @@ export function TableHeader<K>(props: TableHeaderProps<K>) {
               transform: `translate(${col.right}px, 0px)`,
             }}
             size={col.width}
-            setSize={width => props.onResizeColumn?.(col.id, width)}
-            resetSize={() => props.onResizeColumn?.(col.id, null)}
+            setSize={width => props.setColumnSize?.(col.id, width)}
+            resetSize={() => props.resetColumnSize?.(col.id)}
           />
         </>
       )}

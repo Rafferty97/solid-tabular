@@ -24,7 +24,7 @@ import { createEvent } from 'src/lib/createEvent'
 import { TextContent } from './CellContent'
 import './Table.css'
 
-const DEFAULT_COLUMN_SIZE = 200
+const DEFAULT_COLUMN_SIZE = 80
 
 export interface TableProps<K = string> {
   /** The columns. */
@@ -47,8 +47,10 @@ export interface TableProps<K = string> {
   setCellValue?: (rowIdx: number, colId: K, value: unknown) => void
   /** Gets the width of the given column. */
   getColumnSize?: (colId: K) => number | null | undefined
-  /** Sets or resets the width of the given column. If `width` is `null`, this indicates a size reset. */
-  setColumnSize?: (colId: K, width: number | null) => void
+  /** Sets the width of the given column. */
+  setColumnSize?: (colId: K, width: number) => void
+  /** Resets the width of the given column. */
+  resetColumnSize?: (colId: K) => void
   /** Sets the name of the given column. */
   setColumnName?: (colId: K, name: string) => void
   /** Inserts a numer of columns into the table. */
@@ -557,7 +559,8 @@ export default function Table<K = string>(props: TableProps<K>) {
           height={colHeaderHeight()}
           columns={visibleColumns()}
           columnsEditable={props.columnsEditable}
-          onResizeColumn={props.setColumnSize}
+          setColumnSize={props.setColumnSize}
+          resetColumnSize={props.resetColumnSize}
           setColumnName={props.setColumnName}
           removeColumn={id =>
             props.removeColumns?.(

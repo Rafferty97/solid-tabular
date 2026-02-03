@@ -25,8 +25,14 @@ const App: Component = () => {
         setColumnSize={(id, width) =>
           setColumnWidths(m => {
             const newMap = new Map(m)
-            if (width) newMap.set(id, width)
-            else newMap.delete(id)
+            newMap.set(id, width)
+            return newMap
+          })
+        }
+        resetColumnSize={id =>
+          setColumnWidths(m => {
+            const newMap = new Map(m)
+            newMap.delete(id)
             return newMap
           })
         }
