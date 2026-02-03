@@ -18,7 +18,7 @@ const App: Component = () => {
           { id: '5', name: 'E' },
         ]}
         numRows={10}
-        getCellValue={i => (i % 2 ? null : 'hello')}
+        getCellValue={(row, col) => `${col.name}${row + 1}`}
         activeRange={activeRange()}
         setActiveRange={setActiveRange}
         getColumnSize={id => columnWidths().get(id)}

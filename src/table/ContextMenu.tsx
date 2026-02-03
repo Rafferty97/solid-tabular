@@ -9,7 +9,9 @@ import {
 } from 'src/components/ContextMenu'
 
 export function CellContextMenu(props: {
-  editable: boolean
+  rowsEditable: boolean
+  columnsEditable: boolean
+  cellsEditable: boolean
   copy(): void
   paste(): void
   clear(): void
@@ -28,27 +30,27 @@ export function CellContextMenu(props: {
             <span>Copy</span>
             {/* <ContextMenuShortcut>⌘+C</ContextMenuShortcut> */}
           </ContextMenuItem>
-          <ContextMenuItem disabled={!props.editable} onClick={props.paste}>
+          <ContextMenuItem disabled={!props.cellsEditable} onClick={props.paste}>
             <span>Paste</span>
             {/* <ContextMenuShortcut>⌘+V</ContextMenuShortcut> */}
           </ContextMenuItem>
-          <ContextMenuItem disabled={!props.editable} onClick={props.clear}>
+          <ContextMenuItem disabled={!props.cellsEditable} onClick={props.clear}>
             <span>Clear cells</span>
             {/* <ContextMenuShortcut>Backspace</ContextMenuShortcut> */}
           </ContextMenuItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuGroup>
-          <ContextMenuItem disabled={!props.editable} onClick={props.insertRows}>
+          <ContextMenuItem disabled={!props.rowsEditable} onClick={props.insertRows}>
             Insert row(s)
           </ContextMenuItem>
-          <ContextMenuItem disabled={!props.editable} onClick={props.insertColumns}>
+          <ContextMenuItem disabled={!props.columnsEditable} onClick={props.insertColumns}>
             Insert column(s)
           </ContextMenuItem>
-          <ContextMenuItem disabled={!props.editable} onClick={props.removeRows}>
+          <ContextMenuItem disabled={!props.rowsEditable} onClick={props.removeRows}>
             Delete row(s)
           </ContextMenuItem>
-          <ContextMenuItem disabled={!props.editable} onClick={props.removeColumns}>
+          <ContextMenuItem disabled={!props.columnsEditable} onClick={props.removeColumns}>
             Delete column(s)
           </ContextMenuItem>
         </ContextMenuGroup>

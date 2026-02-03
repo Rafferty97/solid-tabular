@@ -37,6 +37,8 @@ export interface TableProps<K = string> {
   columnsEditable?: boolean
   /** Whether rows can be inserted, removed and re-ordered. */
   rowsEditable?: boolean
+  /** Whether cells can be edited. */
+  cellsEditable?: boolean
   /** The state of the selected cell or cells in the table. */
   activeRange: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
@@ -253,7 +255,7 @@ export default function Table<K = string>(props: TableProps<K>) {
           return column.icon
         },
         get readonly() {
-          return column.readonly ?? false
+          return !props.cellsEditable || (column.readonly ?? false)
         },
         get index() {
           return index()
@@ -398,7 +400,7 @@ export default function Table<K = string>(props: TableProps<K>) {
     const cell = activeCellData()
     if (!cell) return
 
-    if (pos && !cell.column.readonly) {
+    if (pos && props.cellsEditable && !cell.column.readonly) {
       emitFocus({ start: pos, end: pos })
     } else {
       emitFocus({ start: 0 })
@@ -406,10 +408,12 @@ export default function Table<K = string>(props: TableProps<K>) {
   }
 
   // Start editing a cell in "quick mode"
-  const quickEditCell = () => {
+  const quickEditCell = (ev: KeyboardEvent) => {
     const cell = activeCellData()
-    if (cell && !cell.column.readonly) {
+    if (cell && props.cellsEditable && !cell.column.readonly) {
       emitQuickEdit()
+    } else {
+      ev.preventDefault()
     }
   }
 
@@ -484,11 +488,7 @@ export default function Table<K = string>(props: TableProps<K>) {
     }
 
     if (isPrintableKey(ev) || ev.key === 'Backspace') {
-      if (!props.columns[activeCell()[1]]?.readonly) {
-        quickEditCell()
-      } else {
-        ev.preventDefault()
-      }
+      quickEditCell(ev)
       return
     }
 
@@ -630,7 +630,9 @@ export default function Table<K = string>(props: TableProps<K>) {
 
       {/* Cells */}
       <CellContextMenu
-        editable={props.rowsEditable === true && props.columnsEditable === true}
+        rowsEditable={props.rowsEditable ?? false}
+        columnsEditable={props.columnsEditable ?? false}
+        cellsEditable={props.cellsEditable ?? false}
         copy={handleCopy}
         paste={handlePaste}
         clear={handleClear}
@@ -666,7 +668,7 @@ export default function Table<K = string>(props: TableProps<K>) {
                 rect={activeCellOutline()}
                 format={column.format ?? {}}
                 value={props.getCellValue(rowIdx, column)}
-                readonly={column.readonly}
+                readonly={!props.cellsEditable || column.readonly}
                 setCellValue={value => props.setCellValue?.(rowIdx, column.id, value)}
                 onFinishedEditing={focus}
                 focus={onFocus}
