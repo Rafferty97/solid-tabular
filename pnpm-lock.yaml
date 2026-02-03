@@ -23,9 +23,6 @@ importers:
       solid-events:
         specifier: ^0.0.6
         version: 0.0.6
-      solid-icons:
-        specifier: ^1.2.0
-        version: 1.2.0(solid-js@1.8.17)
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -1953,11 +1950,6 @@ packages:
 
   solid-events@0.0.6:
     resolution: {integrity: sha512-6PxS2fLhftHRf8lGNY7m5l23bHovXo44x3zmfTioKsPLGpKDckCstjDGkYcOMpFVEnlBzt0GMKqBPvn1HOd8rA==}
-
-  solid-icons@1.2.0:
-    resolution: {integrity: sha512-yjQxWQMi9l19P5Af9vjsvalTMDFPDL4XD6etrUdNxNVhFp1bMYF0SFwUa5VYDfJ7u0SF3Qkz/F7BZxqcLUwklw==}
-    peerDependencies:
-      solid-js: '*'
 
   solid-js@1.8.17:
     resolution: {integrity: sha512-E0FkUgv9sG/gEBWkHr/2XkBluHb1fkrHywUgA6o6XolPDCJ4g1HaLmQufcBBhiF36ee40q+HpG/vCZu7fLpI3Q==}
@@ -4163,10 +4155,6 @@ snapshots:
     dependencies:
       rxjs: 7.8.1
       solid-js: 1.9.11
-
-  solid-icons@1.2.0(solid-js@1.8.17):
-    dependencies:
-      solid-js: 1.8.17
 
   solid-js@1.8.17:
     dependencies:

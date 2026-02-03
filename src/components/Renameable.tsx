@@ -1,5 +1,4 @@
-import { createMemo, createSignal, Show } from 'solid-js'
-import { FiEdit2, FiX } from 'solid-icons/fi'
+import { createMemo, createSignal } from 'solid-js'
 import { cn } from 'src/lib/classnames'
 import './Renameable.css'
 
@@ -53,13 +52,6 @@ export function Renameable(props: RenameableProps) {
   const cancelRename = () => {
     setValue(null)
     endRename()
-  }
-
-  // Event handlers
-  const handleClickEdit = (ev: MouseEvent) => {
-    ev.preventDefault()
-    ev.stopPropagation()
-    startRename()
   }
 
   const handleDblClick = (ev: MouseEvent) => {

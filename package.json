@@ -90,7 +90,6 @@
     "@tanstack/solid-virtual": "^3.13.18",
     "clsx": "^2.1.1",
     "radashi": "^12.7.1",
-    "solid-events": "^0.0.6",
-    "solid-icons": "^1.2.0"
+    "solid-events": "^0.0.6"
   }
 }
