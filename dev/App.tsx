@@ -11,13 +11,13 @@ const App: Component = () => {
     <div class={styles.App}>
       <Table
         columns={[
-          { id: '1', name: 'Hello world' },
+          { id: '1', name: 'A' },
           { id: '2', name: 'B' },
           { id: '3', name: 'C' },
           { id: '4', name: 'D' },
           { id: '5', name: 'E' },
         ]}
-        numRows={50}
+        numRows={10}
         getCellValue={i => (i % 2 ? null : 'hello')}
         activeRange={activeRange()}
         setActiveRange={setActiveRange}
@@ -30,7 +30,8 @@ const App: Component = () => {
             return newMap
           })
         }
-        columnsEditable={true}
+        columnsEditable
+        rowsEditable
       />
     </div>
   )

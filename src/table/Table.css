@@ -183,4 +183,55 @@
   &:focus-within .cell-outline.shade {
     background: rgba(0, 0, 0, 0.1);
   }
+
+  .new-row-btn {
+    /* <Show when={props.rowsEditable}>
+          <div
+            class="-mt-[6px] flex cursor-pointer border-t border-gray-300 bg-white hover:bg-gray-100"
+            style={{
+              width: `${tableWidth()}px`,
+              height: `${cellHeight()}px`,
+              'z-index': Z_INDEX.NEW_ROW,
+            }}
+            onMouseDown={ev => ev.button === 0 && appendRow()}
+          >
+            <div class="sticky left-0 z-10 flex flex-none items-center py-1 pr-2">
+              <span class="pr-2 text-right text-gray-400" style={{ width: `${rowHeaderWidth()}px` }}>
+                +
+              </span>
+              <span class="pl-1 text-sm">Add row</span>
+            </div>
+          </div>
+        </Show> */
+    display: flex;
+    margin: -6px 0 6px 0;
+    cursor: pointer;
+    border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    background-color: white;
+
+    &:hover {
+      background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
+    }
+
+    > :first-child {
+      display: flex;
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      flex: none;
+      align-items: center;
+      padding: 0.25rem 0.5rem 0.25rem 0;
+
+      .plus-btn {
+        padding-right: 0.5rem;
+        text-align: right;
+        color: oklch(70.7% 0.022 261.325); /* gray-400 */
+      }
+
+      .text {
+        padding-left: 0.25rem;
+        /* text-sm */
+      }
+    }
+  }
 }

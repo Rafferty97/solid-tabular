@@ -683,7 +683,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       {/* New row button */}
       <Show when={props.rowsEditable}>
         <div
-          class="-mt-[6px] flex cursor-pointer border-t border-gray-300 bg-white hover:bg-gray-100"
+          class="new-row-btn"
           style={{
             width: `${tableWidth()}px`,
             height: `${cellHeight()}px`,
@@ -691,11 +691,11 @@ export default function Table<K = string>(props: TableProps<K>) {
           }}
           onMouseDown={ev => ev.button === 0 && appendRow()}
         >
-          <div class="sticky left-0 z-10 flex flex-none items-center py-1 pr-2">
-            <span class="pr-2 text-right text-gray-400" style={{ width: `${rowHeaderWidth()}px` }}>
+          <div>
+            <span class="plus-btn" style={{ width: `${rowHeaderWidth()}px` }}>
               +
             </span>
-            <span class="pl-1 text-sm">Add row</span>
+            <span class="text">Add row</span>
           </div>
         </div>
       </Show>

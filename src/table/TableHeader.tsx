@@ -102,7 +102,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
           setValue={name => props.setColumnName?.(props.column.id, name)}
           disabled={!props.columnsEditable}
         />
-        <div class="flex-1" />
+        <div style={{ flex: '1' }} />
         <Dynamic component={props.column.icon} />
       </div>
     </div>
