@@ -11,7 +11,6 @@ export interface CellProps {
   value: unknown
   setValue?: (value: unknown) => void
   onEdit?: (pos: number) => void
-  extActive?: boolean
 }
 
 export interface CellInputProps {
@@ -31,20 +30,16 @@ export function Cell(props: CellProps) {
   const [value, setValue] = createSignal(props.value)
   createEffect(() => props.value !== undefined && setValue(props.value))
 
-  const isNull = () => value() === null
-
   return (
-    <div ref={containerEl} class="cell" data-ext-active={props.extActive} tabIndex={-1}>
-      <Show when={!isNull()} fallback={<span class="null">NULL</span>}>
-        <Dynamic
-          component={props.component}
-          value={value()}
-          setValue={props.setValue}
-          onEdit={props.onEdit}
-          editable={props.editable}
-          format={props.format}
-        />
-      </Show>
+    <div ref={containerEl} class="cell" tabIndex={-1}>
+      <Dynamic
+        component={props.component}
+        value={value()}
+        setValue={props.setValue}
+        onEdit={props.onEdit}
+        editable={props.editable}
+        format={props.format}
+      />
     </div>
   )
 }

@@ -11,7 +11,6 @@ export interface TableHeaderProps<K> {
   onResizeColumn?: (colId: K, width: number | null) => void
   setColumnName?: (colId: K, name: string) => void
   removeColumn(colId: K): void
-  extActiveColumn?: K
 }
 
 export function TableHeader<K>(props: TableHeaderProps<K>) {
@@ -25,7 +24,6 @@ export function TableHeader<K>(props: TableHeaderProps<K>) {
             columnsEditable={props.columnsEditable}
             setColumnName={props.setColumnName}
             removeColumn={props.removeColumn}
-            extActive={col.id === props.extActiveColumn}
           />
           <ResizeBar
             class="resize-bar"
@@ -53,7 +51,6 @@ interface ColumnHeaderProps<K> {
   columnsEditable?: boolean
   setColumnName?: (id: K, name: string) => void
   removeColumn(id: K): void
-  extActive?: boolean
 }
 
 function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
@@ -94,7 +91,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
       }}
       onContextMenu={handleContextMenu}
     >
-      <div data-ext-active={props.extActive}>
+      <div>
         <Renameable
           class="renameable"
           value={props.column.name}

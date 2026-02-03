@@ -41,8 +41,6 @@ export interface TableProps<K = string> {
   activeRange: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
   setActiveRange?: (range: ActiveRange) => void
-  /** The ID of the column that is being edited by another (external) UI. */
-  extActiveColumn?: K
   /** Gets the value in a cell. */
   getCellValue(row: number, column: Column<K>): unknown
   /** Sets the value of the given cell. */
@@ -180,15 +178,6 @@ export default function Table<K = string>(props: TableProps<K>) {
       }
       shouldRestoreScroll = false
     }
-  })
-
-  // Scroll to the externally active column
-  const extActiveColumnIdx = createMemo(() =>
-    props.columns.findIndex(c => c.id === props.extActiveColumn),
-  )
-  createEffect(() => {
-    const colIndex = extActiveColumnIdx()
-    if (colIndex >= 0) scrollToCell(undefined, colIndex)
   })
 
   // Watch scroll position
@@ -576,7 +565,6 @@ export default function Table<K = string>(props: TableProps<K>) {
               1,
             )
           }
-          extActiveColumn={props.extActiveColumn}
         />
         {/* Add column button */}
         <Show when={props.columnsEditable}>
@@ -647,7 +635,6 @@ export default function Table<K = string>(props: TableProps<K>) {
                 onMouseContextDown={onCellContextDown}
                 onContextMenu={onContextMenu}
                 onEditCell={editCell}
-                extActiveColumn={props.extActiveColumn}
               />
             )}
           </For>

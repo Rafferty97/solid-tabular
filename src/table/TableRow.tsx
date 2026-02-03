@@ -15,7 +15,6 @@ export interface TableRowProps<K> {
   onMouseContextDown?: (ev: MouseEvent, i: number, j: number) => void
   onContextMenu?: (ev: MouseEvent, i: number, j: number) => void
   onEditCell?: (pos: number) => void
-  extActiveColumn?: K
 }
 
 export function TableRow<K>(props: TableRowProps<K>) {
@@ -43,7 +42,6 @@ export function TableRow<K>(props: TableRowProps<K>) {
               value={props.getCellValue(props.rowIdx, col)}
               setValue={value => props.setCellValue?.(props.rowIdx, col.id, value)}
               onEdit={props.onEditCell}
-              extActive={col.id === props.extActiveColumn}
             />
           </div>
         )}
