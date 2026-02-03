@@ -1,17 +1,17 @@
 {
-  "name": "{{name_of_lib}}",
+  "name": "solid-tabular",
   "version": "0.0.0",
-  "description": "{{desc_of_lib}}",
+  "description": "Spreadsheet-like table UI",
   "license": "MIT",
-  "author": "{{me}}",
+  "author": "Rafferty97",
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/{{me}}/{{name_of_lib}}.git"
+    "url": "git+https://github.com/Rafferty97/solid-tabular.git"
   },
-  "homepage": "https://github.com/{{me}}/{{name_of_lib}}#readme",
+  "homepage": "https://github.com/Rafferty97/solid-tabular#readme",
   "bugs": {
-    "url": "https://github.com/{{me}}/{{name_of_lib}}/issues"
+    "url": "https://github.com/Rafferty97/solid-tabular/issues"
   },
   "files": [
     "dist"
