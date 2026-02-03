@@ -17,7 +17,7 @@ const App: Component = () => {
           { id: '4', name: 'D' },
           { id: '5', name: 'E' },
         ]}
-        numRows={5}
+        numRows={50}
         getCellValue={i => (i % 2 ? null : 'hello')}
         activeRange={activeRange()}
         setActiveRange={setActiveRange}
