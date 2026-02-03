@@ -28,10 +28,10 @@ export function TableHeader<K>(props: TableHeaderProps<K>) {
             extActive={col.id === props.extActiveColumn}
           />
           <ResizeBar
+            class="resize-bar"
             style={{
               position: 'absolute',
               top: '0',
-              'z-index': '10',
               margin: '0 0 0 -4px',
               width: '9px',
               height: `${props.height - 1}px`,

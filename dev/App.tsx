@@ -1,14 +1,14 @@
 import { createSignal, type Component } from 'solid-js'
-import styles from './App.module.css'
 import { Table } from 'src'
 import { ActiveRange } from 'src/table/types'
+import './app.css'
 
 const App: Component = () => {
   const [activeRange, setActiveRange] = createSignal<ActiveRange>({ cell: [0, 0] })
   const [columnWidths, setColumnWidths] = createSignal(new Map<string, number>())
 
   return (
-    <div class={styles.App}>
+    <div class="app">
       <Table
         columns={[
           { id: '1', name: 'A' },
@@ -17,7 +17,7 @@ const App: Component = () => {
           { id: '4', name: 'D' },
           { id: '5', name: 'E' },
         ]}
-        numRows={10}
+        numRows={50}
         getCellValue={(row, col) => `${col.name}${row + 1}`}
         activeRange={activeRange()}
         setActiveRange={setActiveRange}

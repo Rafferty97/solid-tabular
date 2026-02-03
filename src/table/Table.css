@@ -24,6 +24,7 @@
     top: 0;
     left: 0;
     height: 0;
+    z-index: 40;
 
     > :first-child {
       display: flex;
@@ -42,6 +43,15 @@
     position: sticky;
     top: 0;
     height: 0;
+    z-index: 30;
+
+    .resize-bar {
+      position: absolute;
+      top: 0;
+      margin: 0 0 0 -4px;
+      width: 9px;
+      z-index: 10;
+    }
   }
 
   .column-header {
@@ -69,7 +79,7 @@
   .add-column-btn {
     position: absolute;
     top: 0;
-    z-index: -999;
+    z-index: -9999;
     cursor: pointer;
 
     > div {
@@ -91,6 +101,7 @@
     position: sticky;
     left: 0;
     height: 0;
+    z-index: 20;
   }
 
   .row-header {
@@ -187,29 +198,12 @@
   }
 
   .new-row-btn {
-    /* <Show when={props.rowsEditable}>
-          <div
-            class="-mt-[6px] flex cursor-pointer border-t border-gray-300 bg-white hover:bg-gray-100"
-            style={{
-              width: `${tableWidth()}px`,
-              height: `${cellHeight()}px`,
-              'z-index': Z_INDEX.NEW_ROW,
-            }}
-            onMouseDown={ev => ev.button === 0 && appendRow()}
-          >
-            <div class="sticky left-0 z-10 flex flex-none items-center py-1 pr-2">
-              <span class="pr-2 text-right text-gray-400" style={{ width: `${rowHeaderWidth()}px` }}>
-                +
-              </span>
-              <span class="pl-1 text-sm">Add row</span>
-            </div>
-          </div>
-        </Show> */
     display: flex;
     margin: -6px 0 6px 0;
     cursor: pointer;
     border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
     background-color: white;
+    z-index: 40;
 
     &:hover {
       background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
@@ -312,8 +306,8 @@
       width: 0.75rem;
     }
   }
-}
 
-.cell-ctx-menu {
-  min-width: 10rem;
+  .cell-ctx-menu {
+    min-width: 10rem;
+  }
 }

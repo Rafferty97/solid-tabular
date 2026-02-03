@@ -9,7 +9,6 @@ import {
   createEffect,
 } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
-import { isEqual } from 'src/lib/isEqual'
 import type { ActiveRange, CellIndex, Column } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
 import { isPrintableKey } from 'src/lib/isPrintableKey'
@@ -19,7 +18,6 @@ import { TableRow } from './TableRow'
 import { CellInputContainer } from './Cell'
 import { Outline } from './Outline'
 import { watchViewport } from 'src/lib/watchViewport'
-import { Z_INDEX } from './zIndex'
 import { modifierKey } from 'src/lib/modifierKey'
 import { CellContextMenu } from './ContextMenu'
 import { createEvent } from 'src/lib/createEvent'
@@ -121,16 +119,12 @@ export default function Table<K = string>(props: TableProps<K>) {
   const activeCell = () => activeRange().cell
 
   // Details about the active cell
-  const activeCellData = createMemo(
-    () => {
-      const [rowIdx, colIdx] = activeCell()
-      const column = props.columns[colIdx]
-      if (rowIdx >= props.numRows || !column) return undefined
-      return { rowIdx, column }
-    },
-    undefined,
-    { equals: isEqual },
-  )
+  const activeCellData = createMemo(() => {
+    const [rowIdx, colIdx] = activeCell()
+    const column = props.columns[colIdx]
+    if (rowIdx >= props.numRows || !column) return undefined
+    return { rowIdx, column }
+  })
 
   // Whether a range is selected as opposed to a single cell
   const rangeIsSelected = () => activeRange().size[0] > 1 || activeRange().size[1] > 1
@@ -556,7 +550,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       <div ref={focusEl} class="focus-proxy" tabIndex={-1} contentEditable />
 
       {/* Corner box */}
-      <div class="corner-box" style={{ 'z-index': Z_INDEX.CORNER_BOX }}>
+      <div class="corner-box">
         <div style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}>
           <span>#</span>
         </div>
@@ -569,10 +563,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       </div>
 
       {/* Column headers */}
-      <div
-        class="column-headers"
-        style={{ width: `${tableWidth()}px`, 'z-index': Z_INDEX.TABLE_HEADER }}
-      >
+      <div class="column-headers" style={{ width: `${tableWidth()}px` }}>
         <TableHeader
           height={colHeaderHeight()}
           columns={visibleColumns()}
@@ -606,7 +597,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       </div>
 
       {/* Row headers */}
-      <div class="row-headers" style={{ 'z-index': Z_INDEX.ROW_HEADER }}>
+      <div class="row-headers">
         <For each={rowVirtualizer.getVirtualItems()}>
           {item => (
             <div
@@ -689,7 +680,6 @@ export default function Table<K = string>(props: TableProps<K>) {
           style={{
             width: `${tableWidth()}px`,
             height: `${cellHeight()}px`,
-            'z-index': Z_INDEX.NEW_ROW,
           }}
           onMouseDown={ev => ev.button === 0 && appendRow()}
         >

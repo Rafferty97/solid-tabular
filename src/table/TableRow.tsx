@@ -1,7 +1,6 @@
 import { For } from 'solid-js'
 import { PositionedColumn } from './types'
 import { Cell } from './Cell'
-import { Z_INDEX } from './zIndex'
 import { TextContent } from './CellContent'
 
 export interface TableRowProps<K> {
@@ -30,7 +29,6 @@ export function TableRow<K>(props: TableRowProps<K>) {
               width: `${col.width}px`,
               height: `${props.height}px`,
               transform: `translate(${col.left}px, ${props.top}px)`,
-              'z-index': Z_INDEX.CELL,
             }}
             onMouseDown={ev => {
               if (ev.button === 0) props.onMouseDown(ev, props.rowIdx, col.index)
