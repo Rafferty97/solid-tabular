@@ -1,4 +1,4 @@
-[data-solid-tabular-table] {
+.solid-tabular\/table {
   position: relative;
   width: 100%;
   height: 100%;
@@ -9,17 +9,13 @@
   background-color: oklch(92.8% 0.006 264.531); /* gray-200 */
   text-align: left;
 
-  * {
-    box-sizing: border-box;
-  }
-
-  .focus-proxy {
+  .solid-tabular\/focus-proxy {
     position: absolute;
     width: 0;
     height: 0;
   }
 
-  .corner-box {
+  .solid-tabular\/corner-box {
     position: sticky;
     top: 0;
     left: 0;
@@ -35,17 +31,18 @@
       background-color: white;
       padding: 0.25rem 0.5rem 0.25rem 0;
       color: oklch(70.7% 0.022 261.325); /* gray-400 */
+      box-sizing: border-box;
       /* text-xs */
     }
   }
 
-  .column-headers {
+  .solid-tabular\/column-headers {
     position: sticky;
     top: 0;
     height: 0;
     z-index: 30;
 
-    .resize-bar {
+    .solid-tabular\/resize-bar {
       position: absolute;
       top: 0;
       margin: 0 0 0 -4px;
@@ -54,12 +51,13 @@
     }
   }
 
-  .column-header {
+  .solid-tabular\/column-header {
     position: absolute;
     top: 0;
     border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
     border-bottom: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
     background-color: white;
+    box-sizing: border-box;
 
     > :first-child {
       position: absolute;
@@ -68,15 +66,16 @@
       align-items: center;
       gap: 0.25rem;
       padding: 0.25rem;
+      box-sizing: border-box;
     }
 
-    .renameable {
+    .solid-tabular\/renameable {
       min-width: 0;
       font-weight: bold;
     }
   }
 
-  .add-column-btn {
+  .solid-tabular\/add-column-btn {
     position: absolute;
     top: 0;
     z-index: -9999;
@@ -90,6 +89,7 @@
       border-top: none;
       background-color: white;
       padding: 0.25rem 0;
+      box-sizing: border-box;
 
       &:hover {
         background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
@@ -97,14 +97,14 @@
     }
   }
 
-  .row-headers {
+  .solid-tabular\/row-headers {
     position: sticky;
     left: 0;
     height: 0;
     z-index: 20;
   }
 
-  .row-header {
+  .solid-tabular\/row-header {
     position: absolute;
     top: 0;
     left: 0;
@@ -116,31 +116,33 @@
     background-color: white;
     padding: 0.25rem 0.5rem 0.25rem 0;
     color: oklch(70.7% 0.022 261.325); /* gray-400 */
+    box-sizing: border-box;
     /* text-xs */
   }
 
-  .row .row-cell,
-  .row .row-header {
+  .solid-tabular\/row .solid-tabular\/row-cell,
+  .solid-tabular\/row .solid-tabular\/row-header {
     background: white;
   }
 
-  .row:hover .row-cell,
-  .row:hover .row-header,
-  .data-table:focus-within .row.active .row-cell,
-  .data-table:focus-within .row.active .row-header {
+  .solid-tabular\/row:hover .solid-tabular\/row-cell,
+  .solid-tabular\/row:hover .solid-tabular\/row-header,
+  &:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-cell,
+  &:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-header {
     background: rgb(243, 245, 247);
   }
 
-  .row-cell {
+  .solid-tabular\/row-cell {
     position: absolute;
     top: 0;
     left: 0;
     cursor: cell;
     border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
     border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    box-sizing: border-box;
   }
 
-  .cell {
+  .solid-tabular\/cell {
     position: relative;
     display: flex;
     height: 100%;
@@ -152,17 +154,18 @@
       width: 100%;
       text-align: center;
       font-style: italic;
-      color: oklch(87.2% 0.01 258.338); /* gray-300 */
+      color: oklch(87.2% 0.01 258.338); /* gray-300 * /
     } */
   }
 
-  .cell-input-container {
+  .solid-tabular\/cell-input-container {
     position: absolute;
     border: 1px solid transparent;
     pointer-events: none;
+    box-sizing: border-box;
   }
 
-  .cell-input {
+  .solid-tabular\/cell-input {
     overflow: hidden;
     height: 0;
     pointer-events: auto;
@@ -178,6 +181,7 @@
       outline: none;
       border: none;
       font: inherit;
+      box-sizing: border-box;
       /* text-sm */
     }
 
@@ -186,24 +190,25 @@
     }
   }
 
-  .cell-outline {
+  .solid-tabular\/cell-outline {
     position: absolute;
     overflow: hidden;
     z-index: 10;
     pointer-events: none;
   }
 
-  &:focus-within .cell-outline.shade {
+  &:focus-within .solid-tabular\/cell-outline.solid-tabular\/shade {
     background: rgba(0, 0, 0, 0.1);
   }
 
-  .new-row-btn {
+  .solid-tabular\/new-row-btn {
     display: flex;
     margin: -6px 0 6px 0;
     cursor: pointer;
     border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
     background-color: white;
     z-index: 40;
+    box-sizing: border-box;
 
     &:hover {
       background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
@@ -217,49 +222,53 @@
       flex: none;
       align-items: center;
       padding: 0.25rem 0.5rem 0.25rem 0;
+      box-sizing: border-box;
 
-      .plus-btn {
+      .solid-tabular\/plus-btn {
         padding-right: 0.5rem;
         text-align: right;
         color: oklch(70.7% 0.022 261.325); /* gray-400 */
+        box-sizing: border-box;
       }
 
-      .text {
+      .solid-tabular\/text {
         padding-left: 0.25rem;
         /* text-sm */
+        box-sizing: border-box;
       }
     }
   }
 
-  .text-content {
+  .solid-tabular\/text-content {
     display: flex;
     width: 100%;
     overflow: hidden;
     padding: 0.25rem;
     white-space: nowrap;
+    box-sizing: border-box;
 
-    .text-content-inner {
+    .solid-tabular\/text-content-inner {
       display: flex;
       flex: 1;
       overflow: hidden;
 
-      &.align-right {
+      &.solid-tabular\/align-right {
         flex-direction: row-reverse;
       }
 
-      &.align-center {
+      &.solid-tabular\/align-center {
         justify-content: center;
       }
     }
   }
 
-  .checkbox-content {
+  .solid-tabular\/checkbox-content {
     display: flex;
     width: 100%;
     align-items: center;
     justify-content: center;
 
-    .sr-only {
+    .solid-tabular\/sr-only {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -269,9 +278,10 @@
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
       border-width: 0;
+      box-sizing: border-box;
     }
 
-    .checkbox-box {
+    .solid-tabular\/checkbox-box {
       display: flex;
       height: 1rem;
       width: 1rem;
@@ -280,34 +290,37 @@
       border-radius: 0.125rem;
       border-width: 1px;
       border-style: solid;
+      box-sizing: border-box;
 
-      &.checked {
+      &.solid-tabular\/checked {
         border-color: rgb(29, 78, 216); /* blue-700 */
         background-color: rgb(37, 99, 235); /* blue-600 */
         color: rgb(29, 78, 216); /* blue-700 */
+        box-sizing: border-box;
       }
 
-      &.unchecked {
+      &.solid-tabular\/unchecked {
         border-color: oklch(87.2% 0.01 258.338); /* gray-300 */
         background-color: white;
+        box-sizing: border-box;
       }
 
-      &.editable {
+      &.solid-tabular\/editable {
         cursor: pointer;
       }
 
-      &.readonly {
+      &.solid-tabular\/readonly {
         cursor: cell;
       }
     }
 
-    .checkbox-icon {
+    .solid-tabular\/checkbox-icon {
       height: 0.75rem;
       width: 0.75rem;
     }
   }
 
-  .cell-ctx-menu {
+  .solid-tabular\/cell-ctx-menu {
     min-width: 10rem;
   }
 }

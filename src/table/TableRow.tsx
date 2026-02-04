@@ -19,11 +19,11 @@ export interface TableRowProps<K> {
 
 export function TableRow<K>(props: TableRowProps<K>) {
   return (
-    <div class={['row', props.isActive ? 'active' : ''].join(' ')}>
+    <div class="solid-tabular/row" data-active={props.isActive}>
       <For each={props.columns}>
         {col => (
           <div
-            class="row-cell"
+            class="solid-tabular/row-cell"
             style={{
               width: `${col.width}px`,
               height: `${props.height}px`,

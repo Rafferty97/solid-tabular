@@ -31,14 +31,14 @@ export function TextContent(props: CellContentProps) {
   return (
     <div
       onDblClick={handleDoubleClick}
-      class="text-content"
+      class="solid-tabular/text-content"
       style={{ color: props.format.color ?? 'black' }}
     >
       {props.format.prefix?.(props.value)}
       <div
-        class={cn('text-content-inner', {
-          'align-right': props.format.align === 'right',
-          'align-center': props.format.align === 'center',
+        class={cn('solid-tabular/text-content-inner', {
+          'solid-tabular/align-right': props.format.align === 'right',
+          'solid-tabular/align-center': props.format.align === 'center',
         })}
       >
         <span ref={contentEl}>{props.format.content?.(props.value) ?? String(props.value)}</span>
@@ -50,25 +50,25 @@ export function TextContent(props: CellContentProps) {
 
 export function CheckboxContent(props: CellContentProps) {
   return (
-    <div class="checkbox-content">
+    <div class="solid-tabular/checkbox-content">
       <label>
         <input
           type="checkbox"
-          class="sr-only"
+          class="solid-tabular/sr-only"
           checked={!!props.value}
           onChange={ev => props.setValue?.(ev.target.checked)}
           disabled={!props.editable}
         />
         <div
           class={cn(
-            'checkbox-box',
-            props.value ? 'checked' : 'unchecked',
-            props.editable ? 'editable' : 'readonly',
+            'solid-tabular/checkbox-box',
+            props.value ? 'solid-tabular/checked' : 'solid-tabular/unchecked',
+            props.editable ? 'solid-tabular/editable' : 'solid-tabular/readonly',
           )}
         >
           {!!props.value && (
             <svg
-              class="checkbox-icon"
+              class="solid-tabular/checkbox-icon"
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

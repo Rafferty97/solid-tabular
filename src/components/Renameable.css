@@ -1,4 +1,4 @@
-[data-solid-tabular-renameable] {
+.solid-tabular\/renameable {
   position: relative;
   text-wrap: nowrap;
   outline: none;
@@ -10,55 +10,9 @@
     white-space: pre;
     user-select: none;
 
-    &.empty {
+    &.solid-tabular\/empty {
       color: oklch(70.7% 0.022 261.325); /* gray-400 */
     }
-  }
-
-  .cancel-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-
-    svg {
-      margin-left: 0.25rem;
-      color: rgb(55, 65, 81); /* gray-700 */
-    }
-  }
-
-  .edit-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    color: oklch(70.7% 0.022 261.325); /* gray-400 */
-    transition: opacity 0.15s;
-
-    &.clickable {
-      cursor: pointer;
-    }
-
-    &:hover {
-      color: rgb(55, 65, 81); /* gray-700 */
-    }
-
-    svg {
-      margin-left: 0.25rem;
-    }
-  }
-
-  .renameable-edit-btn {
-    opacity: 0;
-  }
-
-  &:hover .renameable-edit-btn {
-    opacity: 1;
   }
 
   input {
@@ -75,7 +29,7 @@
     font: inherit;
     outline: none;
 
-    &.show {
+    &[data-visible='true'] {
       width: auto;
       border-radius: 4px;
       background-color: white;

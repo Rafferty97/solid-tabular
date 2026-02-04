@@ -1,16 +1,16 @@
-[data-solid-tabular-resize-bar] {
+.solid-tabular\/resizebar {
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
 
-  &.horizontal {
+  &.solid-tabular\/horizontal {
     right: 0;
     left: 0;
     cursor: ns-resize;
   }
 
-  &.vertical {
+  &.solid-tabular\/vertical {
     top: 0;
     bottom: 0;
     cursor: ew-resize;
@@ -23,7 +23,7 @@
   }
 
   &:hover > div,
-  > div.resizing {
+  > div[data-resizing='true'] {
     opacity: 1;
   }
 }

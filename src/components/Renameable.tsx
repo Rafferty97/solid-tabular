@@ -83,21 +83,20 @@ export function Renameable(props: RenameableProps) {
 
   return (
     <div
-      data-solid-tabular-renameable
-      class={props.class}
+      class={cn(props.class, 'solid-tabular/renameable')}
       onPointerDown={ev => value() != null && ev.stopPropagation()}
       onClick={ev => ev.stopPropagation()}
       onDblClick={handleDblClick}
       ref={containerEl}
     >
-      <div class={cn({ empty: !props.value.length })} title={shownValue()}>
+      <div class={cn({ 'solid-tabular/empty': !props.value.length })} title={shownValue()}>
         {shownValue()}
       </div>
       <input
         ref={inputEl}
         name="input"
         tabIndex={-1}
-        class={cn({ show: value() != null })}
+        data-visible={value() != null}
         placeholder={props.placeholder}
         onKeyDown={handleKeyDown}
         onInput={handleInput}

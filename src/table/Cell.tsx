@@ -31,7 +31,7 @@ export function Cell(props: CellProps) {
   createEffect(() => props.value !== undefined && setValue(props.value))
 
   return (
-    <div ref={containerEl} class="cell" tabIndex={-1}>
+    <div ref={containerEl} class="solid-tabular/cell" tabIndex={-1}>
       <Dynamic
         component={props.component}
         value={value()}
@@ -85,7 +85,7 @@ export function CellInput(props: CellInputProps) {
   }
 
   return (
-    <div class="cell-input">
+    <div class="solid-tabular/cell-input">
       <input
         ref={inputEl}
         // name="cellinput"
@@ -117,7 +117,7 @@ export interface CellInputContainerProps {
 export function CellInputContainer(props: CellInputContainerProps) {
   return (
     <div
-      class="cell-input-container"
+      class="solid-tabular/cell-input-container"
       style={{
         left: `${props.rect.left}px`,
         top: `${props.rect.top}px`,

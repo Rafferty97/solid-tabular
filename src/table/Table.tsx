@@ -528,7 +528,7 @@ export default function Table<K = string>(props: TableProps<K>) {
   return (
     <div
       ref={tableEl}
-      data-solid-tabular-table
+      class="solid-tabular/table"
       onKeyDown={handleKeyDown}
       onCopy={handleCopy}
       onPaste={handlePaste}
@@ -538,10 +538,10 @@ export default function Table<K = string>(props: TableProps<K>) {
       }}
       tabIndex={-1}
     >
-      <div ref={focusEl} class="focus-proxy" tabIndex={-1} contentEditable />
+      <div ref={focusEl} class="solid-tabular/focus-proxy" tabIndex={-1} contentEditable />
 
       {/* Corner box */}
-      <div class="corner-box">
+      <div class="solid-tabular/corner-box">
         <div style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}>
           <span>#</span>
         </div>
@@ -554,7 +554,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       </div>
 
       {/* Column headers */}
-      <div class="column-headers" style={{ width: `${tableWidth()}px` }}>
+      <div class="solid-tabular/column-headers" style={{ width: `${tableWidth()}px` }}>
         <TableHeader
           height={colHeaderHeight()}
           columns={visibleColumns()}
@@ -571,7 +571,7 @@ export default function Table<K = string>(props: TableProps<K>) {
         />
         {/* Add column button */}
         <Show when={props.columnsEditable}>
-          <div class="add-column-btn" style={{ left: `${tableWidth()}px` }}>
+          <div class="solid-tabular/add-column-btn" style={{ left: `${tableWidth()}px` }}>
             <div
               style={{ width: `80px`, height: `${colHeaderHeight()}px` }}
               onMouseDown={ev => ev.button === 0 && props.insertColumns?.(numCols(), 1)}
@@ -588,11 +588,11 @@ export default function Table<K = string>(props: TableProps<K>) {
       </div>
 
       {/* Row headers */}
-      <div class="row-headers">
+      <div class="solid-tabular/row-headers">
         <For each={rowVirtualizer.getVirtualItems()}>
           {item => (
             <div
-              class="row-header"
+              class="solid-tabular/row-header"
               style={{
                 width: `${rowHeaderWidth()}px`,
                 height: `${cellHeight()}px`,
@@ -666,7 +666,7 @@ export default function Table<K = string>(props: TableProps<K>) {
       {/* New row button */}
       <Show when={props.rowsEditable}>
         <div
-          class="new-row-btn"
+          class="solid-tabular/new-row-btn"
           style={{
             width: `${tableWidth()}px`,
             height: `${cellHeight()}px`,
@@ -674,10 +674,10 @@ export default function Table<K = string>(props: TableProps<K>) {
           onMouseDown={ev => ev.button === 0 && appendRow()}
         >
           <div>
-            <span class="plus-btn" style={{ width: `${rowHeaderWidth()}px` }}>
+            <span class="solid-tabular/plus-btn" style={{ width: `${rowHeaderWidth()}px` }}>
               +
             </span>
-            <span class="text">Add row</span>
+            <span class="solid-tabular/text">Add row</span>
           </div>
         </div>
       </Show>

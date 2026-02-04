@@ -27,7 +27,7 @@ export function TableHeader<K>(props: TableHeaderProps<K>) {
             removeColumn={props.removeColumn}
           />
           <ResizeBar
-            class="resize-bar"
+            class="solid-tabular/resize-bar"
             style={{
               position: 'absolute',
               top: '0',
@@ -84,7 +84,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
 
   return (
     <div
-      class="column-header"
+      class="solid-tabular/column-header"
       style={{
         width: `${props.column.width}px`,
         height: `${props.height}px`,
@@ -94,7 +94,7 @@ function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
     >
       <div>
         <Renameable
-          class="renameable"
+          class="solid-tabular/renameable"
           value={props.column.name}
           setValue={name => props.setColumnName?.(props.column.id, name)}
           disabled={!props.columnsEditable}

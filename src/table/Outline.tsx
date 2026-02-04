@@ -21,7 +21,7 @@ export function Outline(props: OutlineProps) {
   return (
     <Show when={props.rect}>
       <div
-        class={cn('cell-outline', { shade: props.shade })}
+        class={cn('solid-tabular/cell-outline', { 'solid-tabular/shade': props.shade })}
         style={{
           left: `${props.headerLeft ? props.headerLeft - px(2) : props.rect!.left - expand()}px`,
           top: `${props.headerTop ? props.headerTop - px(2) : props.rect!.top - expand()}px`,
