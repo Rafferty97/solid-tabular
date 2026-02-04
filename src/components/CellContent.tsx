@@ -1,42 +1,54 @@
-import { createMemo, onCleanup } from 'solid-js'
+import { createMemo, JSXElement, onCleanup } from 'solid-js'
 import { calcCursorPosition } from 'src/lib/calcCursorPosition'
 import { cn } from 'src/lib/classnames'
 import { CellContentProps } from '../table/Cell'
 import './CellContent.css'
 
-export function TextContent(props: CellContentProps) {
-  if (props.editing) {
-    return <TextContentInput {...props} />
-  }
+export type CellFormat = Partial<{
+  align: Alignment
+  content: (value: unknown) => string
+  prefix: (value: unknown) => JSXElement
+  suffix: (value: unknown) => JSXElement
+  color: string
+}>
 
-  let contentEl: HTMLDivElement | undefined
+export type Alignment = 'left' | 'center' | 'right'
 
-  const handleDoubleClick = (ev: MouseEvent) => {
-    ev.stopPropagation()
-    props.onEdit?.(contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0)
-  }
+export const textContent =
+  (format: CellFormat = {}) =>
+  (props: CellContentProps) => {
+    if (props.editing) {
+      return textContentInput(format)(props)
+    }
 
-  return (
-    <div
-      onDblClick={handleDoubleClick}
-      class="solid-tabular/text-content"
-      style={{ color: props.format.color ?? 'black' }}
-    >
-      {props.format.prefix?.(props.value)}
+    let contentEl: HTMLDivElement | undefined
+
+    const handleDoubleClick = (ev: MouseEvent) => {
+      ev.stopPropagation()
+      props.onEdit?.(contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0)
+    }
+
+    return (
       <div
-        class={cn('solid-tabular/text-content-inner', {
-          'solid-tabular/align-right': props.format.align === 'right',
-          'solid-tabular/align-center': props.format.align === 'center',
-        })}
+        onDblClick={handleDoubleClick}
+        class="solid-tabular/text-content"
+        style={{ color: format.color ?? 'black' }}
       >
-        <span ref={contentEl}>{props.format.content?.(props.value) ?? String(props.value)}</span>
+        {format.prefix?.(props.value)}
+        <div
+          class={cn('solid-tabular/text-content-inner', {
+            'solid-tabular/align-right': format.align === 'right',
+            'solid-tabular/align-center': format.align === 'center',
+          })}
+        >
+          <span ref={contentEl}>{format.content?.(props.value) ?? String(props.value)}</span>
+        </div>
+        {format.suffix?.(props.value)}
       </div>
-      {props.format.suffix?.(props.value)}
-    </div>
-  )
-}
+    )
+  }
 
-export function TextContentInput(props: CellContentProps) {
+export const textContentInput = (format: CellFormat) => (props: CellContentProps) => {
   let inputEl: HTMLInputElement | undefined
 
   let quickMode = true
@@ -81,7 +93,7 @@ export function TextContentInput(props: CellContentProps) {
       <input
         ref={inputEl}
         // name="cellinput"
-        style={{ 'text-align': props.format.align }}
+        style={{ 'text-align': format.align }}
         value={value()}
         onChange={ev => props.setValue?.(ev.currentTarget.value)}
         onKeyDown={handleInputKeyDown}
@@ -95,7 +107,11 @@ export function TextContentInput(props: CellContentProps) {
   )
 }
 
-export function CheckboxContent(props: CellContentProps<boolean>) {
+export const checkboxContent = () => (props: CellContentProps) => {
+  if (props.editing) {
+    return null
+  }
+
   return (
     <div class="solid-tabular/checkbox-content">
       <label>

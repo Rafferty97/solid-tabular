@@ -1,24 +1,23 @@
 import { For } from 'solid-js'
 import { PositionedColumn } from './types'
 import { Cell } from './Cell'
-import { TextContent } from '../components/CellContent'
 import './TableRow.css'
 
-export interface TableRowProps<K> {
-  columns: PositionedColumn<K>[]
+export interface TableRowProps<K, T> {
+  columns: PositionedColumn<K, T>[]
   rowIdx: number
   top: number
   height: number
   isActive: boolean
-  getCellValue: (row: number, column: PositionedColumn<K>) => unknown
-  setCellValue?: (rowIdx: number, colId: K, value: unknown) => void
+  getCellValue: (row: number, column: PositionedColumn<K, T>) => T
+  setCellValue?: (rowIdx: number, colId: K, value: T) => void
   onMouseDown: (ev: MouseEvent, i: number, j: number) => void
   onMouseContextDown?: (ev: MouseEvent, i: number, j: number) => void
   onContextMenu?: (ev: MouseEvent, i: number, j: number) => void
-  onEditCell?: (pos: number) => void
+  onEditCell(pos: number): void
 }
 
-export function TableRow<K>(props: TableRowProps<K>) {
+export function TableRow<K, T>(props: TableRowProps<K, T>) {
   return (
     <div class="solid-tabular/row" data-active={props.isActive}>
       <For each={props.columns}>
@@ -36,10 +35,9 @@ export function TableRow<K>(props: TableRowProps<K>) {
             }}
             onContextMenu={ev => props.onContextMenu?.(ev, props.rowIdx, col.index)}
           >
-            <Cell
-              component={col.component ?? TextContent}
-              format={col.format ?? {}}
-              editable={col.readonly !== true}
+            <Cell<T>
+              component={col.component}
+              readonly={col.readonly === true}
               value={props.getCellValue(props.rowIdx, col)}
               setValue={value => props.setCellValue?.(props.rowIdx, col.id, value)}
               onEdit={props.onEditCell}

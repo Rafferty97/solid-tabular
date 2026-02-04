@@ -1,34 +1,31 @@
-import { createEffect, createSignal, Component, JSXElement } from 'solid-js'
+import { createEffect, createSignal, Component } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Handler, nullHandler } from 'src/lib/createEvent'
 import { Rect } from 'src/lib/rect'
 import './Cell.css'
 
-export interface CellProps {
-  component: Component<CellContentProps>
-  format: CellFormat
+export interface CellProps<T> {
+  component: Component<CellContentProps<T>>
   readonly: boolean
-  value: unknown
-  setValue(value: unknown): void
+  value: T
+  setValue(value: T): void
   onEdit(pos: number): void
 }
 
-export interface CellInputProps {
-  component: Component<CellContentProps>
+export interface CellInputProps<T> {
+  component: Component<CellContentProps<T>>
   rect: Rect
-  format: CellFormat
   readonly: boolean
-  value: unknown
-  setValue(value: unknown): void
+  value: T
+  setValue(value: T): void
   onFinishedEditing(): void
   focus: Handler<{ start: number; end?: number }>
   quickEdit: Handler<void>
 }
 
-export type CellContentProps<T = string> = {
+export type CellContentProps<T = unknown> = {
   value: T
   readonly: boolean
-  format: CellFormat
   editing: boolean
   setValue(value: T): void
   onEdit(pos: number): void
@@ -37,30 +34,19 @@ export type CellContentProps<T = string> = {
   quickEdit: Handler<void>
 }
 
-export type CellFormat = Partial<{
-  align: Alignment
-  content: (value: unknown) => string
-  prefix: (value: unknown) => JSXElement
-  suffix: (value: unknown) => JSXElement
-  color: string
-}>
-
-export type Alignment = 'left' | 'center' | 'right'
-
-export function Cell(props: CellProps) {
+export function Cell<T>(props: CellProps<T>) {
   let containerEl: HTMLDivElement | undefined
 
   // Eliminate flicker
   const [value, setValue] = createSignal(props.value)
-  createEffect(() => props.value !== undefined && setValue(props.value))
+  createEffect(() => props.value !== undefined && setValue(() => props.value))
 
   return (
     <div ref={containerEl} class="solid-tabular/cell" tabIndex={-1}>
       <Dynamic
         component={props.component}
-        value={value() as string} // FIXME
+        value={value()}
         readonly={props.readonly}
-        format={props.format}
         editing={false}
         setValue={props.setValue}
         onEdit={props.onEdit}
@@ -72,7 +58,7 @@ export function Cell(props: CellProps) {
   )
 }
 
-export function CellInputContainer(props: CellInputProps) {
+export function CellInputContainer<T>(props: CellInputProps<T>) {
   return (
     <div
       class="solid-tabular/cell-input-container"
@@ -85,9 +71,8 @@ export function CellInputContainer(props: CellInputProps) {
     >
       <Dynamic
         component={props.component}
-        value={props.value as string} // FIXME
+        value={props.value}
         readonly={props.readonly}
-        format={props.format}
         editing={true}
         setValue={value => props.setValue(value)}
         onEdit={() => {}}

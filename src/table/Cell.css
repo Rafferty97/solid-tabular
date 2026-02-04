@@ -12,30 +12,6 @@
   } */
 }
 
-.solid-tabular\/cell-input {
-  overflow: hidden;
-  height: 0;
-  pointer-events: auto;
-
-  input {
-    display: block;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-color: white;
-    padding: 0.25rem;
-    outline: none;
-    border: none;
-    font: inherit;
-    box-sizing: border-box;
-  }
-
-  input:focus {
-    position: absolute;
-  }
-}
-
 .solid-tabular\/cell-input-container {
   position: absolute;
   border: 1px solid transparent;

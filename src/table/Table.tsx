@@ -21,17 +21,16 @@ import { watchViewport } from 'src/lib/watchViewport'
 import { modifierKey } from 'src/lib/modifierKey'
 import { CellContextMenu } from './ContextMenu'
 import { createEvent } from 'src/lib/createEvent'
-import { TextContent } from '../components/CellContent'
 import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
-import './Table.css'
 import { RowHeader } from './RowHeader'
+import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
 
-export interface TableProps<K = string> {
+export interface TableProps<K = string, T = string> {
   /** The columns. */
-  columns: Column<K>[]
+  columns: Column<K, T>[]
   /** The number of rows. */
   numRows: number
   /** Whether columns can be inserted, removed, modified and re-ordered. */
@@ -45,9 +44,9 @@ export interface TableProps<K = string> {
   /** Sets the state of the selected cell or cells in the table. */
   setActiveRange?: (range: ActiveRange) => void
   /** Gets the value in a cell. */
-  getCellValue(row: number, column: Column<K>): unknown
+  getCellValue(row: number, column: Column<K, T>): T
   /** Sets the value of the given cell. */
-  setCellValue?: (rowIdx: number, colId: K, value: unknown) => void
+  setCellValue?: (rowIdx: number, colId: K, value: T) => void
   /** Gets the width of the given column. */
   getColumnSize?: (colId: K) => number | null | undefined
   /** Sets the width of the given column. */
@@ -80,7 +79,7 @@ export interface TableProps<K = string> {
   onScrollPositionChange?: (scrollLeft: number, scrollTop: number) => void
 }
 
-export default function Table<K = string>(props: TableProps<K>) {
+export default function Table<K = string, T = unknown>(props: TableProps<K, T>) {
   // The root DOM element of the table
   let tableEl: HTMLDivElement | undefined
 
@@ -231,11 +230,8 @@ export default function Table<K = string>(props: TableProps<K>) {
         get name() {
           return column.name
         },
-        get format() {
-          return column.format ?? {}
-        },
         get component() {
-          return column.component ?? TextContent
+          return column.component
         },
         get icon() {
           return column.icon
@@ -644,9 +640,8 @@ export default function Table<K = string>(props: TableProps<K>) {
           <Show when={activeCellData()} keyed>
             {({ rowIdx, column }) => (
               <CellInputContainer
-                component={column.component ?? TextContent}
+                component={column.component}
                 rect={activeCellOutline()}
-                format={column.format ?? {}}
                 value={props.getCellValue(rowIdx, column)}
                 readonly={!props.cellsEditable || !!column.readonly}
                 setValue={value => props.setCellValue?.(rowIdx, column.id, value)}

@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
-import { Table, type ActiveRange } from 'src'
+import { Table, type ActiveRange, textContent, checkboxContent } from 'src'
 import './main.css'
 
 const meta = {
@@ -20,11 +20,11 @@ export const BasicUsage: Story = {
       <div class="table-wrap">
         <Table
           columns={[
-            { id: '1', name: 'A' },
-            { id: '2', name: 'B' },
-            { id: '3', name: 'C' },
-            { id: '4', name: 'D' },
-            { id: '5', name: 'E' },
+            { id: '1', name: 'A', component: textContent() },
+            { id: '2', name: 'B', component: textContent() },
+            { id: '3', name: 'C', component: textContent() },
+            { id: '4', name: 'D', component: textContent() },
+            { id: '5', name: 'E', component: checkboxContent() },
           ]}
           numRows={10}
           getCellValue={(row, col) => `${col.name}${row + 1}`}

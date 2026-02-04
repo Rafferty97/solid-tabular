@@ -1,6 +1,7 @@
 import { createSignal, type Component } from 'solid-js'
 import { Table } from 'src'
 import { ActiveRange } from 'src/table/types'
+import { textContent } from 'src/components/CellContent'
 import './app.css'
 
 const App: Component = () => {
@@ -11,11 +12,11 @@ const App: Component = () => {
     <div class="app">
       <Table
         columns={[
-          { id: '1', name: 'A' },
-          { id: '2', name: 'B' },
-          { id: '3', name: 'C' },
-          { id: '4', name: 'D' },
-          { id: '5', name: 'E' },
+          { id: '1', name: 'A', component: textContent() },
+          { id: '2', name: 'B', component: textContent() },
+          { id: '3', name: 'C', component: textContent() },
+          { id: '4', name: 'D', component: textContent() },
+          { id: '5', name: 'E', component: textContent() },
         ]}
         numRows={50}
         getCellValue={(row, col) => `${col.name}${row + 1}`}

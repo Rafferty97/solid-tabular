@@ -4,8 +4,8 @@ import { Renameable } from 'src/components/Renameable'
 import ResizeBar from 'src/components/ResizeBar'
 import './ColumnHeader.css'
 
-export interface ColumnHeaderProps<K> {
-  column: PositionedColumn<K>
+export interface ColumnHeaderProps<K, T> {
+  column: PositionedColumn<K, T>
   height: number
   columnsEditable?: boolean
   setColumnName?: (id: K, name: string) => void
@@ -14,7 +14,7 @@ export interface ColumnHeaderProps<K> {
   removeColumn(id: K): void
 }
 
-export function ColumnHeader<K>(props: ColumnHeaderProps<K>) {
+export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
   return (
     <>
       <div
