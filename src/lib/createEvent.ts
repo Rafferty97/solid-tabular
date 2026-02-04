@@ -18,3 +18,7 @@ export function createEvent<T>() {
 
   return [subscribe, emit] as const
 }
+
+export function nullHandler<T>(): Handler<T> {
+  return () => {}
+}

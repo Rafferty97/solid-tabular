@@ -1,5 +1,5 @@
 import { Component } from 'solid-js'
-import { CellContentProps, CellFormat } from './CellContent'
+import { CellContentProps, CellFormat } from '../components/CellContent'
 
 export type Column<K = string> = {
   id: K

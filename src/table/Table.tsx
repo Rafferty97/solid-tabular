@@ -21,7 +21,7 @@ import { watchViewport } from 'src/lib/watchViewport'
 import { modifierKey } from 'src/lib/modifierKey'
 import { CellContextMenu } from './ContextMenu'
 import { createEvent } from 'src/lib/createEvent'
-import { TextContent } from './CellContent'
+import { TextContent } from '../components/CellContent'
 import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
 import './Table.css'
@@ -644,11 +644,12 @@ export default function Table<K = string>(props: TableProps<K>) {
           <Show when={activeCellData()} keyed>
             {({ rowIdx, column }) => (
               <CellInputContainer
+                component={column.component ?? TextContent}
                 rect={activeCellOutline()}
                 format={column.format ?? {}}
                 value={props.getCellValue(rowIdx, column)}
-                readonly={!props.cellsEditable || column.readonly}
-                setCellValue={value => props.setCellValue?.(rowIdx, column.id, value)}
+                readonly={!props.cellsEditable || !!column.readonly}
+                setValue={value => props.setCellValue?.(rowIdx, column.id, value)}
                 onFinishedEditing={focus}
                 focus={onFocus}
                 quickEdit={onQuickEdit}
