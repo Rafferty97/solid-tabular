@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, JSX, onCleanup } from 'solid-js'
+import { createMemo, createSignal, JSX } from 'solid-js'
 import { devicePixelRatio } from 'src/lib/devicePixelRatio'
 import { cn } from 'src/lib/classnames'
 import '../components/ResizeBar.css'
@@ -10,7 +10,6 @@ export interface ResizeBarProps {
   resetSize?: () => void
   min?: number
   max?: number
-  class?: string
   style?: JSX.CSSProperties | string
   minDelta?: number
 }
@@ -60,10 +59,8 @@ export default function ResizeBar(props: ResizeBarProps) {
   return (
     <div
       ref={element}
-      data-solid-tabular-resize-bar
       class={cn(
-        props.class,
-        'solid-tabular/resizebar',
+        'solid-tabular/resize-bar',
         props.horiz ? 'solid-tabular/horizontal' : 'solid-tabular/vertical',
       )}
       style={props.style}

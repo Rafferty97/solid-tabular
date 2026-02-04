@@ -1,0 +1,21 @@
+.solid-tabular\/row .solid-tabular\/row-cell,
+.solid-tabular\/row .solid-tabular\/row-header {
+  background: white;
+}
+
+.solid-tabular\/row:hover .solid-tabular\/row-cell,
+.solid-tabular\/row:hover .solid-tabular\/row-header,
+&:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-cell,
+&:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-header {
+  background: rgb(243, 245, 247);
+}
+
+.solid-tabular\/row-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: cell;
+  border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+  border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+  box-sizing: border-box;
+}

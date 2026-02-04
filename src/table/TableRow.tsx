@@ -2,6 +2,7 @@ import { For } from 'solid-js'
 import { PositionedColumn } from './types'
 import { Cell } from './Cell'
 import { TextContent } from './CellContent'
+import './TableRow.css'
 
 export interface TableRowProps<K> {
   columns: PositionedColumn<K>[]

@@ -1,6 +1,7 @@
 import { JSXElement } from 'solid-js'
 import { calcCursorPosition } from 'src/lib/calcCursorPosition'
 import { cn } from 'src/lib/classnames'
+import './CellContent.css'
 
 export type CellContentProps = {
   value: unknown

@@ -1,8 +1,9 @@
-import { createEffect, createMemo, createSignal, onCleanup, Show, Component } from 'solid-js'
+import { createEffect, createMemo, createSignal, onCleanup, Component } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Handler } from 'src/lib/createEvent'
 import { CellContentProps, CellFormat } from './CellContent'
 import { Rect } from 'src/lib/rect'
+import './Cell.css'
 
 export interface CellProps {
   component: Component<CellContentProps>
@@ -11,16 +12,6 @@ export interface CellProps {
   value: unknown
   setValue?: (value: unknown) => void
   onEdit?: (pos: number) => void
-}
-
-export interface CellInputProps {
-  format: CellFormat
-  value: unknown
-  setValue: (value: string) => void
-  readonly?: boolean
-  onFinishedEditing?: () => void
-  focus: Handler<{ start: number; end?: number }>
-  quickEdit: Handler<void>
 }
 
 export function Cell(props: CellProps) {
@@ -42,6 +33,16 @@ export function Cell(props: CellProps) {
       />
     </div>
   )
+}
+
+export interface CellInputProps {
+  format: CellFormat
+  value: unknown
+  setValue: (value: string) => void
+  readonly?: boolean
+  onFinishedEditing?: () => void
+  focus: Handler<{ start: number; end?: number }>
+  quickEdit: Handler<void>
 }
 
 export function CellInput(props: CellInputProps) {

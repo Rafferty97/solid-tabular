@@ -13,7 +13,7 @@ import type { ActiveRange, CellIndex, Column } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
 import { isPrintableKey } from 'src/lib/isPrintableKey'
 import { findIndex } from 'src/lib/findIndex'
-import { TableHeader } from './TableHeader'
+import { ColumnHeader } from './ColumnHeader'
 import { TableRow } from './TableRow'
 import { CellInputContainer } from './Cell'
 import { Outline } from './Outline'
@@ -22,7 +22,10 @@ import { modifierKey } from 'src/lib/modifierKey'
 import { CellContextMenu } from './ContextMenu'
 import { createEvent } from 'src/lib/createEvent'
 import { TextContent } from './CellContent'
+import { AddRowButton } from './AddRowButton'
+import { AddColumnButton } from './AddColumnButton'
 import './Table.css'
+import { RowHeader } from './RowHeader'
 
 const DEFAULT_COLUMN_SIZE = 80
 
@@ -76,8 +79,6 @@ export interface TableProps<K = string> {
   /** Called when the table scroll position changes. */
   onScrollPositionChange?: (scrollLeft: number, scrollTop: number) => void
 }
-
-export type { ActiveRange, CellIndex }
 
 export default function Table<K = string>(props: TableProps<K>) {
   // The root DOM element of the table
@@ -555,31 +556,32 @@ export default function Table<K = string>(props: TableProps<K>) {
 
       {/* Column headers */}
       <div class="solid-tabular/column-headers" style={{ width: `${tableWidth()}px` }}>
-        <TableHeader
-          height={colHeaderHeight()}
-          columns={visibleColumns()}
-          columnsEditable={props.columnsEditable}
-          setColumnSize={props.setColumnSize}
-          resetColumnSize={props.resetColumnSize}
-          setColumnName={props.setColumnName}
-          removeColumn={id =>
-            props.removeColumns?.(
-              props.columns.findIndex(c => c.id === id),
-              1,
-            )
-          }
-        />
-        {/* Add column button */}
+        <For each={visibleColumns()}>
+          {column => (
+            <ColumnHeader
+              column={column}
+              height={colHeaderHeight()}
+              columnsEditable={props.columnsEditable}
+              setColumnName={props.setColumnName}
+              setColumnSize={props.setColumnSize}
+              resetColumnSize={props.resetColumnSize}
+              removeColumn={id => {
+                const index = props.columns.findIndex(c => c.id === id)
+                props.removeColumns?.(index, 1)
+              }}
+            />
+          )}
+        </For>
+
         <Show when={props.columnsEditable}>
-          <div class="solid-tabular/add-column-btn" style={{ left: `${tableWidth()}px` }}>
-            <div
-              style={{ width: `80px`, height: `${colHeaderHeight()}px` }}
-              onMouseDown={ev => ev.button === 0 && props.insertColumns?.(numCols(), 1)}
-            >
-              +
-            </div>
-          </div>
+          <AddColumnButton
+            tableWidth={tableWidth()}
+            width={DEFAULT_COLUMN_SIZE}
+            height={colHeaderHeight()}
+            onPointerDown={() => props.insertColumns?.(numCols(), 1)}
+          />
         </Show>
+
         <Outline
           rect={activeRangeOutline()}
           headerTop={colHeaderHeight()}
@@ -591,18 +593,15 @@ export default function Table<K = string>(props: TableProps<K>) {
       <div class="solid-tabular/row-headers">
         <For each={rowVirtualizer.getVirtualItems()}>
           {item => (
-            <div
-              class="solid-tabular/row-header"
-              style={{
-                width: `${rowHeaderWidth()}px`,
-                height: `${cellHeight()}px`,
-                transform: `translateY(${item.start}px)`,
-              }}
-            >
-              <span>{item.index + 1}</span>
-            </div>
+            <RowHeader
+              index={item.index}
+              width={rowHeaderWidth()}
+              height={cellHeight()}
+              y={item.start}
+            />
           )}
         </For>
+
         <Outline
           rect={activeRangeOutline()}
           headerLeft={rowHeaderWidth()}
@@ -642,7 +641,6 @@ export default function Table<K = string>(props: TableProps<K>) {
             )}
           </For>
 
-          {/* Cell input */}
           <Show when={activeCellData()} keyed>
             {({ rowIdx, column }) => (
               <CellInputContainer
@@ -658,28 +656,18 @@ export default function Table<K = string>(props: TableProps<K>) {
             )}
           </Show>
 
-          {/* Active cell range outline */}
           <Outline rect={activeRangeOutline()} shade={rangeIsSelected()} expand />
         </div>
       </CellContextMenu>
 
-      {/* New row button */}
+      {/* Add row button */}
       <Show when={props.rowsEditable}>
-        <div
-          class="solid-tabular/new-row-btn"
-          style={{
-            width: `${tableWidth()}px`,
-            height: `${cellHeight()}px`,
-          }}
-          onMouseDown={ev => ev.button === 0 && appendRow()}
-        >
-          <div>
-            <span class="solid-tabular/plus-btn" style={{ width: `${rowHeaderWidth()}px` }}>
-              +
-            </span>
-            <span class="solid-tabular/text">Add row</span>
-          </div>
-        </div>
+        <AddRowButton
+          tableWidth={tableWidth()}
+          cellHeight={cellHeight()}
+          rowHeaderWidth={rowHeaderWidth()}
+          onPointerDown={appendRow}
+        />
       </Show>
     </div>
   )

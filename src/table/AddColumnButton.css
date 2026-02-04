@@ -1,0 +1,21 @@
+.solid-tabular\/add-column-btn {
+  position: absolute;
+  top: 0;
+  z-index: -9999;
+  cursor: pointer;
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    border-top: none;
+    background-color: white;
+    padding: 0.25rem 0;
+    box-sizing: border-box;
+
+    &:hover {
+      background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
+    }
+  }
+}

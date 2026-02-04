@@ -1,0 +1,47 @@
+.solid-tabular\/cell {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  outline: none;
+  /* text-sm */
+
+  /* .null {
+      width: 100%;
+      text-align: center;
+      font-style: italic;
+      color: oklch(87.2% 0.01 258.338); /* gray-300 * /
+    } */
+}
+
+.solid-tabular\/cell-input {
+  overflow: hidden;
+  height: 0;
+  pointer-events: auto;
+
+  input {
+    display: block;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: white;
+    padding: 0.25rem;
+    outline: none;
+    border: none;
+    font: inherit;
+    box-sizing: border-box;
+    /* text-sm */
+  }
+
+  input:focus {
+    position: absolute;
+  }
+}
+
+.solid-tabular\/cell-input-container {
+  position: absolute;
+  border: 1px solid transparent;
+  pointer-events: none;
+  box-sizing: border-box;
+}
