@@ -32,7 +32,7 @@
       padding: 0.25rem 0.5rem 0.25rem 0;
       color: oklch(70.7% 0.022 261.325); /* gray-400 */
       box-sizing: border-box;
-      /* text-xs */
+      font-size: var(--solid-tabular-font-size-row-num, inherit);
     }
   }
 

@@ -4,9 +4,10 @@ body {
 
 .table-wrap {
   height: 100%;
-  border: 2px solid #444;
+  border: 2px solid oklch(48.011% 0.08557 182.905);
   border-radius: 6px;
   overflow: hidden;
   font-size: 14px;
   --solid-tabular-outline-color: oklch(60% 0.118 184.704);
+  --solid-tabular-font-size-row-num: 12px;
 }
