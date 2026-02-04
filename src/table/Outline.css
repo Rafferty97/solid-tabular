@@ -1,0 +1,10 @@
+.solid-tabular\/cell-outline {
+  position: absolute;
+  overflow: hidden;
+  z-index: 10;
+  pointer-events: none;
+}
+
+&:focus-within .solid-tabular\/cell-outline.solid-tabular\/shade {
+  background: rgba(0, 0, 0, 0.1);
+}
