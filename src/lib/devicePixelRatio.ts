@@ -5,7 +5,7 @@ const isServer = typeof window === 'undefined'
 export function getDevicePixelRatio() {
   if (isServer) return 1
   const ratio = window.devicePixelRatio
-  return ratio / Math.floor(ratio)
+  return ratio / Math.floor(Math.max(ratio, 1))
 }
 
 export const devicePixelRatio = (() => {

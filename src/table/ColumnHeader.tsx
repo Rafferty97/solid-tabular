@@ -11,7 +11,6 @@ export interface ColumnHeaderProps<K, T> {
   setColumnName?: (id: K, name: string) => void
   setColumnSize?: (id: K, width: number) => void
   resetColumnSize?: (id: K) => void
-  removeColumn(id: K): void
 }
 
 export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {

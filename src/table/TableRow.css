@@ -3,12 +3,12 @@
   background: white;
 }
 
-.solid-tabular\/row:hover .solid-tabular\/row-cell,
+/* .solid-tabular\/row:hover .solid-tabular\/row-cell,
 .solid-tabular\/row:hover .solid-tabular\/row-header,
 &:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-cell,
 &:focus-within .solid-tabular\/row[data-active='true'] .solid-tabular\/row-header {
   background: rgb(243, 245, 247);
-}
+} */
 
 .solid-tabular\/row-cell {
   position: absolute;

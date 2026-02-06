@@ -13,15 +13,17 @@ export interface ActiveRange {
   /** The active cell. */
   cell: CellIndex
   /** The selected cell range with inclusive bounds. */
-  range?: {
-    /** The top-left cell in the range. */
-    min: CellIndex
-    /** The top-right cell in the range. */
-    max: CellIndex
-  }
+  range?: CellRange
 }
 
 export type CellIndex = readonly [number, number]
+
+export type CellRange = Readonly<{
+  /** The top-left cell in the range. */
+  min: CellIndex
+  /** The top-right cell in the range. */
+  max: CellIndex
+}>
 
 export type PositionedColumn<K, T> = Column<K, T> & {
   index: number

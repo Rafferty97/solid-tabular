@@ -19,7 +19,7 @@ import { CellInputContainer } from './Cell'
 import { Outline } from './Outline'
 import { watchViewport } from 'src/lib/watchViewport'
 import { modifierKey } from 'src/lib/modifierKey'
-import { CellContextMenu } from './ContextMenu'
+import { moveDown, moveLeft, moveRight, moveUp } from 'src/lib/cellMovement'
 import { createEvent } from 'src/lib/createEvent'
 import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
@@ -94,6 +94,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   // Row and column counts
   const numRows = () => props.numRows
   const numCols = () => props.columns.length
+  const minCell = () => [0, 0] as const
+  const maxCell = () => [numRows() - 1, numCols() - 1] as const
 
   // The active cell range
   const activeRange = createMemo(() => {
@@ -113,7 +115,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
       cell[1] === max[1] ? min[1] : max[1],
     ] as const
     const size = [1 + max[0] - min[0], 1 + max[1] - min[1]] as const
-    return { cell, shiftCell, min, max, size }
+    const bounds = range ?? { min: minCell(), max: maxCell() }
+    return { cell, shiftCell, min, max, size, bounds }
   })
 
   // The active cell, which may be within a range
@@ -126,9 +129,6 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     if (rowIdx >= props.numRows || !column) return undefined
     return { rowIdx, column }
   })
-
-  // Whether a range is selected as opposed to a single cell
-  const rangeIsSelected = () => activeRange().size[0] > 1 || activeRange().size[1] > 1
 
   // Calculate some measurements
   const px = () => 1 / devicePixelRatio()
@@ -315,6 +315,13 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     focus()
   }
 
+  // Moves focus to the given cell without modifying the selected range
+  const moveToCellWithinRange = (cell: CellIndex) => {
+    props.setActiveRange?.({ ...props.activeRange, cell })
+    scrollToCell(cell[0], cell[1])
+    focus()
+  }
+
   // Moves the cell range to the given cell
   const rangeToCell = (i: number, j: number) => {
     i = Math.max(Math.min(i, numRows() - 1), 0)
@@ -420,16 +427,9 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     props.onPaste?.(range.min, range.max)
   }
 
-  const handleClear = async () => {
-    if (!props.rowsEditable) return
-
-    const range = activeRange()
-    props.onClear?.(range.min, range.max)
-  }
-
   // Handle keyboard events
   const handleKeyDown = (ev: KeyboardEvent) => {
-    const { cell, shiftCell, min, max } = activeRange()
+    const { cell, shiftCell, min, max, bounds } = activeRange()
 
     const delta = ev[modifierKey] ? Infinity : 1
 
@@ -451,26 +451,15 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
     if (ev.key == 'Tab') {
       ev.preventDefault()
-      const [row, col] = [cell[0], cell[1] + (ev.shiftKey ? -delta : delta)]
-      if (col >= numCols()) {
-        if (row >= numRows() - 1) {
-          props.insertRows?.(numRows(), 1)
-        }
-        moveToCell(row + 1, 0)
-      } else if (col < 0 && row > 0) {
-        moveToCell(row - 1, numCols() - 1)
-      } else {
-        moveToCell(row, col)
-      }
+      const target = (ev.shiftKey ? moveLeft : moveRight)(cell, bounds)
+      moveToCellWithinRange(target)
       return
     }
 
     if (ev.key == 'Enter') {
       ev.preventDefault()
-      if (cell[0] >= numRows() - 1 && !ev.shiftKey) {
-        props.insertRows?.(numRows(), 1)
-      }
-      moveToCell(cell[0] + (ev.shiftKey ? -delta : delta), cell[1])
+      const target = (ev.shiftKey ? moveUp : moveDown)(cell, bounds)
+      moveToCellWithinRange(target)
       return
     }
 
@@ -566,10 +555,6 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               setColumnName={props.setColumnName}
               setColumnSize={props.setColumnSize}
               resetColumnSize={props.resetColumnSize}
-              removeColumn={id => {
-                const index = props.columns.findIndex(c => c.id === id)
-                props.removeColumns?.(index, 1)
-              }}
             />
           )}
         </For>
@@ -611,55 +596,42 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
       </div>
 
       {/* Cells */}
-      <CellContextMenu
-        rowsEditable={props.rowsEditable ?? false}
-        columnsEditable={props.columnsEditable ?? false}
-        cellsEditable={props.cellsEditable ?? false}
-        copy={handleCopy}
-        paste={handlePaste}
-        clear={handleClear}
-        insertRows={() => props.insertRows?.(activeRange().min[0], activeRange().size[0])}
-        insertColumns={() => props.insertColumns?.(activeRange().min[1], activeRange().size[1])}
-        removeRows={() => props.removeRows?.(activeRange().min[0], activeRange().size[0])}
-        removeColumns={() => props.removeColumns?.(activeRange().min[1], activeRange().size[1])}
-      >
-        <div style={{ width: `${tableWidth() + 6}px`, height: `${tableHeight() + 6}px` }}>
-          <For each={rowVirtualizer.getVirtualItems()}>
-            {item => (
-              <TableRow
-                columns={visibleColumns()}
-                rowIdx={item.index}
-                top={item.start}
-                height={item.size}
-                isActive={item.index >= activeRange().min[0] && item.index <= activeRange().max[0]}
-                getCellValue={props.getCellValue}
-                setCellValue={props.setCellValue}
-                onMouseDown={onCellDown}
-                onMouseContextDown={onCellContextDown}
-                onContextMenu={onContextMenu}
-                onEditCell={editCell}
-              />
-            )}
-          </For>
+      <div style={{ width: `${tableWidth() + 6}px`, height: `${tableHeight() + 6}px` }}>
+        <For each={rowVirtualizer.getVirtualItems()}>
+          {item => (
+            <TableRow
+              columns={visibleColumns()}
+              rowIdx={item.index}
+              top={item.start}
+              height={item.size}
+              isActive={item.index >= activeRange().min[0] && item.index <= activeRange().max[0]}
+              getCellValue={props.getCellValue}
+              setCellValue={props.setCellValue}
+              onMouseDown={onCellDown}
+              onMouseContextDown={onCellContextDown}
+              onContextMenu={onContextMenu}
+              onEditCell={editCell}
+            />
+          )}
+        </For>
 
-          <Show when={activeCellData()} keyed>
-            {({ rowIdx, column }) => (
-              <CellInputContainer
-                component={column.component}
-                rect={activeCellOutline()}
-                value={props.getCellValue(rowIdx, column)}
-                readonly={!props.cellsEditable || !!column.readonly}
-                setValue={value => props.setCellValue?.(rowIdx, column.id, value)}
-                onFinishedEditing={focus}
-                focus={onFocus}
-                quickEdit={onQuickEdit}
-              />
-            )}
-          </Show>
+        <Show when={activeCellData()} keyed>
+          {({ rowIdx, column }) => (
+            <CellInputContainer
+              component={column.component}
+              rect={activeCellOutline()}
+              value={props.getCellValue(rowIdx, column)}
+              readonly={!props.cellsEditable || !!column.readonly}
+              setValue={value => props.setCellValue?.(rowIdx, column.id, value)}
+              onFinishedEditing={focus}
+              focus={onFocus}
+              quickEdit={onQuickEdit}
+            />
+          )}
+        </Show>
 
-          <Outline rect={activeRangeOutline()} shade={rangeIsSelected()} expand />
-        </div>
-      </CellContextMenu>
+        <Outline rect={activeRangeOutline()} highlight={activeCellOutline()} expand />
+      </div>
 
       {/* Add row button */}
       <Show when={props.rowsEditable}>
