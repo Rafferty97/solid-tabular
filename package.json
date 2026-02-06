@@ -41,7 +41,6 @@
   },
   "typesVersions": {},
   "scripts": {
-    "dev": "vite serve dev",
     "build": "tsup",
     "test": "concurrently pnpm:test:*",
     "test:client": "vitest",

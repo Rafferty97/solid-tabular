@@ -1,4 +1,3 @@
 - Extract out context menu
 - Extract out cell content
 - Permit customisation via CSS variables
-- Storybook
