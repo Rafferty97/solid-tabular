@@ -9,6 +9,7 @@ const meta = {
 } satisfies Meta<typeof Table>
 
 export default meta
+
 type Story = StoryObj<typeof meta>
 
 export const BasicUsage: Story = {
@@ -16,16 +17,18 @@ export const BasicUsage: Story = {
     const [activeRange, setActiveRange] = createSignal<ActiveRange>({ cell: [0, 0] })
     const [columnWidths, setColumnWidths] = createSignal(new Map<string, number>())
 
+    const columns = [
+      { id: '1', name: 'A', component: textContent() },
+      { id: '2', name: 'B', component: textContent() },
+      { id: '3', name: 'C', component: textContent() },
+      { id: '4', name: 'D', component: textContent() },
+      { id: '5', name: 'E', component: checkboxContent() },
+    ]
+
     return (
       <div class="table-wrap">
         <Table
-          columns={[
-            { id: '1', name: 'A', component: textContent() },
-            { id: '2', name: 'B', component: textContent() },
-            { id: '3', name: 'C', component: textContent() },
-            { id: '4', name: 'D', component: textContent() },
-            { id: '5', name: 'E', component: checkboxContent() },
-          ]}
+          columns={columns}
           numRows={10}
           getCellValue={(row, col) => `${col.name}${row + 1}`}
           activeRange={activeRange()}

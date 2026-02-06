@@ -24,6 +24,7 @@ import { createEvent } from 'src/lib/createEvent'
 import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
 import { RowHeader } from './RowHeader'
+import { isEqual } from 'radashi'
 import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
@@ -214,14 +215,18 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   const tableHeight = () => rowVirtualizer.getTotalSize()
 
   // Column virtualisation
-  const visibleColumnRange = createMemo(() => {
-    const { left, right } = viewport()
-    const start = Math.max(findIndex(horizSizes().columns, c => c.right >= left) - 1, 0)
-    const end = Math.min(findIndex(horizSizes().columns, c => c.left >= right) + 1, numCols())
-    return { start, end }
-  })
+  const visibleColumnRange = createMemo(
+    () => {
+      const { left, right } = viewport()
+      const start = Math.max(findIndex(horizSizes().columns, c => c.right >= left) - 1, 0)
+      const end = Math.min(findIndex(horizSizes().columns, c => c.left >= right) + 1, numCols())
+      return { start, end }
+    },
+    undefined,
+    { equals: isEqual },
+  )
   const visibleColumns = mapArray(
-    () => props.columns.slice(visibleColumnRange().start, visibleColumnRange().end),
+    createMemo(() => props.columns.slice(visibleColumnRange().start, visibleColumnRange().end)),
     (column, localIndex) => {
       const index = () => localIndex() + visibleColumnRange().start
       const size = createMemo(() => horizSizes().columns[index()]) // FIXME: Can use memo here?
