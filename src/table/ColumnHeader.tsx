@@ -1,3 +1,4 @@
+import { Show } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { PositionedColumn } from './types'
 import { Renameable } from 'src/components/Renameable'
@@ -8,6 +9,7 @@ export interface ColumnHeaderProps<K, T> {
   column: PositionedColumn<K, T>
   height: number
   columnsEditable?: boolean
+  columnsResizeable?: boolean
   setColumnName?: (id: K, name: string) => void
   setColumnSize?: (id: K, width: number) => void
   resetColumnSize?: (id: K) => void
@@ -37,20 +39,22 @@ export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
           <Dynamic component={props.column.icon} />
         </div>
       </div>
-      <ResizeBar
-        style={{
-          position: 'absolute',
-          top: '0',
-          margin: '0 0 0 -4px',
-          width: '9px',
-          height: `${props.height - 1}px`,
-          transform: `translate(${props.column.right}px, 0px)`,
-          'z-index': 10,
-        }}
-        size={props.column.width}
-        setSize={width => props.setColumnSize?.(props.column.id, width)}
-        resetSize={() => props.resetColumnSize?.(props.column.id)}
-      />
+      <Show when={props.columnsResizeable}>
+        <ResizeBar
+          style={{
+            position: 'absolute',
+            top: '0',
+            margin: '0 0 0 -4px',
+            width: '9px',
+            height: `${props.height - 1}px`,
+            transform: `translate(${props.column.right}px, 0px)`,
+            'z-index': 10,
+          }}
+          size={props.column.width}
+          setSize={width => props.setColumnSize?.(props.column.id, width)}
+          resetSize={() => props.resetColumnSize?.(props.column.id)}
+        />
+      </Show>
     </>
   )
 }

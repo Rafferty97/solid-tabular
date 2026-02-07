@@ -1,4 +1,5 @@
 :root {
+  --solid-tabular-font: 0.875rem 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --solid-tabular-bg-color: oklch(92.8% 0.006 264.531);
   --solid-tabular-text-color: black;
   --solid-tabular-cell-color: white;
@@ -32,6 +33,8 @@
   outline: none;
   user-select: none;
   text-align: left;
+  font: var(--solid-tabular-font);
+  font-variant-numeric: tabular-nums;
   background-color: var(--solid-tabular-bg-color);
   color: var(--solid-tabular-text-color);
 

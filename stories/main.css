@@ -4,12 +4,7 @@ body {
 
 .table-wrap {
   height: 100%;
-  border: 2px solid black; /* oklch(48.011% 0.08557 182.905); */
   border-radius: 6px;
   overflow: hidden;
-  font-size: 14px;
-  /* --solid-tabular-accent-color: oklch(60% 0.118 184.704);
-  --solid-tabular-font-size-row-num: 12px;
-  --solid-tabular-text-color: red;
-  --solid-tabular-rownum-color: blue; */
+  /* --solid-tabular-accent-color: oklch(60% 0.118 184.704); */
 }

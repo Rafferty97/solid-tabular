@@ -1,13 +1,4 @@
-import {
-  For,
-  Show,
-  createMemo,
-  createSignal,
-  mapArray,
-  onMount,
-  onCleanup,
-  createEffect,
-} from 'solid-js'
+import { For, Show, createMemo, createSignal, mapArray, createEffect } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
 import { DragMode, type ActiveRange, type CellIndex, type Column } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
@@ -40,6 +31,8 @@ export interface TableProps<K = string, T = string> {
   rowsEditable?: boolean
   /** Whether cells can be edited. */
   cellsEditable?: boolean
+  /** Whether columns can be resized. */
+  columnsResizeable?: boolean
   /** Height of cells in pixels. */
   cellHeight?: number
   /** The state of the selected cell or cells in the table. */
@@ -578,6 +571,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               column={column}
               height={colHeaderHeight()}
               columnsEditable={props.columnsEditable}
+              columnsResizeable={props.columnsResizeable}
               setColumnName={props.setColumnName}
               setColumnSize={props.setColumnSize}
               resetColumnSize={props.resetColumnSize}

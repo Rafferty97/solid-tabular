@@ -48,9 +48,6 @@ export const BasicUsage: Story = {
               return newMap
             })
           }
-          cellsEditable
-          rowsEditable
-          columnsEditable
         />
       </div>
     )
