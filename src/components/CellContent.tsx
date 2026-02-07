@@ -25,7 +25,7 @@ export const textContent =
 
     const handleDoubleClick = (ev: MouseEvent) => {
       ev.stopPropagation()
-      props.onEdit?.(contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0)
+      props.onEdit(contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0)
     }
 
     return (
@@ -64,7 +64,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
   props.focus(({ start, end }) => edit(start, end ?? null, false))
   props.quickEdit(() => edit(0, null, true))
 
-  onCleanup(() => inputEl === document.activeElement && props.setValue?.(inputEl.value))
+  onCleanup(() => inputEl === document.activeElement && props.setValue(inputEl.value))
 
   const handleInputKeyDown = (ev: KeyboardEvent) => {
     if (!inputEl) return
@@ -80,7 +80,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
     if (ev.key === 'Escape') {
       ev.preventDefault()
       inputEl.value = value()
-      props.onFinishedEditing?.()
+      props.onFinishedEditing()
       return
     }
 
@@ -95,7 +95,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
         // name="cellinput"
         style={{ 'text-align': format.align }}
         value={value()}
-        onChange={ev => props.setValue?.(ev.currentTarget.value)}
+        onChange={ev => props.setValue(ev.currentTarget.value)}
         onKeyDown={handleInputKeyDown}
         readOnly={props.readonly}
         onClick={() => (quickMode = false)}
@@ -119,7 +119,7 @@ export const checkboxContent = () => (props: CellContentProps) => {
           type="checkbox"
           class="solid-tabular/sr-only"
           checked={!!props.value}
-          onChange={ev => props.setValue?.(ev.target.checked)}
+          onChange={ev => props.setValue(ev.target.checked)}
           disabled={props.readonly}
         />
         <div

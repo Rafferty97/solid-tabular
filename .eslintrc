@@ -5,7 +5,6 @@
   "ignorePatterns": ["node_modules", "dist", "dev", "tsup.config.ts", "vitest.config.ts"],
   "parserOptions": {
     "project": "./tsconfig.json",
-    "tsconfigRootDir": ".",
     "sourceType": "module"
   },
   "rules": {
