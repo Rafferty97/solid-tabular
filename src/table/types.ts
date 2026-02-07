@@ -1,14 +1,6 @@
 import { Component } from 'solid-js'
 import { CellContentProps } from './Cell'
 
-export type Column<K, T> = {
-  id: K
-  name: string
-  component: Component<CellContentProps<T>>
-  icon?: Component
-  readonly?: boolean
-}
-
 export interface ActiveRange {
   /** The active cell. */
   cell: CellIndex
@@ -25,7 +17,11 @@ export type CellRange = Readonly<{
   max: CellIndex
 }>
 
-export type PositionedColumn<K, T> = Column<K, T> & {
+export type PositionedColumn<Column, Value> = {
+  column: Column
+  name: string
+  component: Component<CellContentProps<Value>>
+  icon?: Component
   index: number
   left: number
   right: number

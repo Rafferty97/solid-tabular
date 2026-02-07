@@ -4,6 +4,7 @@
   --solid-tabular-text-color: black;
   --solid-tabular-cell-color: white;
   --solid-tabular-cell-hover-color: oklch(96.7% 0.003 264.542);
+  --solid-tabular-header-color: var(--solid-tabular-cell-color);
   --solid-tabular-border-color: oklch(87.2% 0.01 258.338);
   --solid-tabular-placeholder-color: oklch(70.7% 0.022 261.325);
   --solid-tabular-accent-color: oklch(45.7% 0.24 277.023);

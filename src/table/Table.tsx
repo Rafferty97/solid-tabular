@@ -1,6 +1,6 @@
 import { For, Show, createMemo, createSignal, mapArray, createEffect } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
-import { DragMode, type ActiveRange, type CellIndex, type Column } from './types'
+import type { DragMode, ActiveRange, CellIndex } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
 import { isPrintableKey } from 'src/lib/isPrintableKey'
 import { findIndex } from 'src/lib/findIndex'
@@ -15,22 +15,21 @@ import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
 import { RowHeader } from './RowHeader'
 import { isEqual } from 'radashi'
+import { textContent } from 'src/components/CellContent'
 import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
 const DEFAULT_CELL_HEIGHT = 29
 
-export interface TableProps<K = string, T = string> {
+export interface TableProps<Column, Value = unknown> {
   /** The columns. */
-  columns: Column<K, T>[]
+  columns: Column[]
   /** The number of rows. */
   numRows: number
   /** Whether columns can be inserted, removed, modified and re-ordered. */
   columnsEditable?: boolean
   /** Whether rows can be inserted, removed and re-ordered. */
   rowsEditable?: boolean
-  /** Whether cells can be edited. */
-  cellsEditable?: boolean
   /** Whether columns can be resized. */
   columnsResizeable?: boolean
   /** Height of cells in pixels. */
@@ -39,18 +38,22 @@ export interface TableProps<K = string, T = string> {
   activeRange?: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
   setActiveRange?: (range: ActiveRange) => void
+  /** Gets whether a given cell is editable. */
+  getCellEditable?: (row: number, column: Column) => boolean
   /** Gets the value in a cell. */
-  getCellValue(row: number, column: Column<K, T>): T
+  getCellValue(row: number, column: Column): Value
   /** Sets the value of the given cell. */
-  setCellValue?: (rowIdx: number, colId: K, value: T) => void
+  setCellValue?: (row: number, column: Column, value: Value) => void
   /** Gets the width of the given column. */
-  getColumnSize?: (colId: K) => number | null | undefined
+  getColumnSize?: (column: Column) => number | null | undefined
   /** Sets the width of the given column. */
-  setColumnSize?: (colId: K, width: number) => void
+  setColumnSize?: (column: Column, width: number) => void
   /** Resets the width of the given column. */
-  resetColumnSize?: (colId: K) => void
+  resetColumnSize?: (column: Column) => void
+  /** Gets the name of the given column. */
+  getColumnName?: (column: Column) => string
   /** Sets the name of the given column. */
-  setColumnName?: (colId: K, name: string) => void
+  setColumnName?: (column: Column, name: string) => void
   /** Inserts a numer of columns into the table. */
   insertColumns?: (index: number, count: number) => void
   /** Inserts a number of rows into the table. */
@@ -62,7 +65,7 @@ export interface TableProps<K = string, T = string> {
   /** Called whenever the range of rows visible in the viewport changes. */
   onViewportChanged?: (start: number, end: number) => void
   /** Fired when a cell context menu is opened. */
-  onCellContextMenu?: (ev: MouseEvent, rowIdx: number, colId: string) => void
+  onCellContextMenu?: (ev: MouseEvent, row: number, column: Column) => void
   /** Fired when a range of cells is copied to the clipboard. */
   onCopy?: (min: CellIndex, max: CellIndex) => void
   /** Fired when a range of cells is pasted to from the clipboard. */
@@ -75,7 +78,7 @@ export interface TableProps<K = string, T = string> {
   onScrollPositionChange?: (scrollLeft: number, scrollTop: number) => void
 }
 
-export default function Table<K = string, T = unknown>(props: TableProps<K, T>) {
+export default function Table<Column, Value = unknown>(props: TableProps<Column, Value>) {
   // The root DOM element of the table
   let tableEl: HTMLDivElement | undefined
 
@@ -119,10 +122,10 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   const activeCellData = createMemo(() => {
     const cell = activeCell()
     if (!cell) return undefined
-    const rowIdx = cell[0]
+    const row = cell[0]
     const column = props.columns[cell[1]]
     if (cell[0] >= props.numRows || !column) return undefined
-    return { rowIdx, column }
+    return { row, column }
   })
 
   // Calculate some measurements
@@ -194,7 +197,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
     let x = headerWidth
     const columns = props.columns.map(column => {
-      const rawWidth = props.getColumnSize?.(column.id) ?? DEFAULT_COLUMN_SIZE
+      const rawWidth = props.getColumnSize?.(column) ?? DEFAULT_COLUMN_SIZE
       const width = Math.round(rawWidth * dpr) / dpr
       const [left, right] = [x, x + width]
       x += width
@@ -208,6 +211,9 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   const columnSize = (idx: number) => horizSizes().columns[idx]
   const tableWidth = () => horizSizes().tableWidth
   const tableHeight = () => rowVirtualizer.getTotalSize()
+
+  // FIXME
+  const TextContent = textContent()
 
   // Column virtualisation
   const visibleColumnRange = createMemo(
@@ -226,18 +232,15 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
       const index = () => localIndex() + visibleColumnRange().start
       const size = createMemo(() => horizSizes().columns[index()])
       return {
-        id: column.id,
+        column,
         get name() {
-          return column.name
+          return props.getColumnName?.(column) ?? String(column)
         },
         get component() {
-          return column.component
+          return TextContent // FIXME
         },
         get icon() {
-          return column.icon
-        },
-        get readonly() {
-          return !props.cellsEditable || (column.readonly ?? false)
+          return undefined // FIXME
         },
         get index() {
           return index()
@@ -416,7 +419,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     const cell = activeCellData()
     if (!cell) return
 
-    if (pos && props.cellsEditable && !cell.column.readonly) {
+    if (pos && props.getCellEditable?.(cell.row, cell.column)) {
       emitFocus({ start: pos, end: pos })
     } else {
       emitFocus({ start: 0 })
@@ -426,7 +429,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   // Start editing a cell in "quick mode"
   const quickEditCell = (ev: KeyboardEvent) => {
     const cell = activeCellData()
-    if (cell && props.cellsEditable && !cell.column.readonly) {
+    if (cell && props.getCellEditable?.(cell.row, cell.column)) {
       emitQuickEdit()
     } else {
       ev.preventDefault()
@@ -637,7 +640,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
           {item => (
             <TableRow
               columns={visibleColumns()}
-              rowIdx={item.index}
+              row={item.index}
               top={item.start}
               height={item.size}
               getCellValue={props.getCellValue}
@@ -651,13 +654,12 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
         </For>
 
         <Show when={activeCellData()} keyed>
-          {({ rowIdx, column }) => (
+          {({ row, column }) => (
             <CellInputContainer
-              component={column.component}
+              component={TextContent}
               rect={activeCellOutline()!}
-              value={props.getCellValue(rowIdx, column)}
-              readonly={!props.cellsEditable || !!column.readonly}
-              setValue={value => props.setCellValue?.(rowIdx, column.id, value)}
+              value={props.getCellValue(row, column)}
+              setValue={value => props.setCellValue?.(row, column, value)}
               onFinishedEditing={focus}
               focus={onFocus}
               quickEdit={onQuickEdit}

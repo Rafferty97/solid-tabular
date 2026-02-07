@@ -10,7 +10,7 @@
     justify-content: center;
     border: 1px solid var(--solid-tabular-border-color);
     border-top: none;
-    background-color: var(--solid-tabular-cell-color);
+    background-color: var(--solid-tabular-header-color);
     padding: 0.25rem 0;
     box-sizing: border-box;
 

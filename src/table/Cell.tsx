@@ -6,7 +6,6 @@ import './Cell.css'
 
 export interface CellProps<T> {
   component: Component<CellContentProps<T>>
-  readonly: boolean
   value: T
   setValue(value: T): void
   onEdit(pos: number): void
@@ -15,7 +14,6 @@ export interface CellProps<T> {
 export interface CellInputProps<T> {
   component: Component<CellContentProps<T>>
   rect: Rect
-  readonly: boolean
   value: T
   setValue(value: T): void
   onFinishedEditing(): void
@@ -25,7 +23,6 @@ export interface CellInputProps<T> {
 
 export type CellContentProps<T = unknown> = {
   value: T
-  readonly: boolean
   editing: boolean
   setValue(value: T): void
   onEdit(pos: number): void
@@ -46,7 +43,6 @@ export function Cell<T>(props: CellProps<T>) {
       <Dynamic
         component={props.component}
         value={value()}
-        readonly={props.readonly}
         editing={false}
         setValue={props.setValue}
         onEdit={props.onEdit}
@@ -72,7 +68,6 @@ export function CellInputContainer<T>(props: CellInputProps<T>) {
       <Dynamic
         component={props.component}
         value={props.value}
-        readonly={props.readonly}
         editing={true}
         setValue={value => props.setValue(value)}
         onEdit={() => {}}

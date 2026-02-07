@@ -5,14 +5,14 @@ import { Renameable } from 'src/components/Renameable'
 import ResizeBar from 'src/components/ResizeBar'
 import './ColumnHeader.css'
 
-export interface ColumnHeaderProps<K, T> {
-  column: PositionedColumn<K, T>
+export interface ColumnHeaderProps<Column, Value> {
+  column: PositionedColumn<Column, Value>
   height: number
   columnsEditable?: boolean
   columnsResizeable?: boolean
-  setColumnName?: (id: K, name: string) => void
-  setColumnSize?: (id: K, width: number) => void
-  resetColumnSize?: (id: K) => void
+  setColumnName?: (column: Column, name: string) => void
+  setColumnSize?: (column: Column, width: number) => void
+  resetColumnSize?: (column: Column) => void
   onPointerDown?: (ev: PointerEvent) => void
 }
 
@@ -32,7 +32,7 @@ export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
           <Renameable
             class="solid-tabular/renameable"
             value={props.column.name}
-            setValue={name => props.setColumnName?.(props.column.id, name)}
+            setValue={name => props.setColumnName?.(props.column.column, name)}
             disabled={!props.columnsEditable}
           />
           <div style={{ flex: '1' }} />
@@ -51,8 +51,8 @@ export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
             'z-index': 10,
           }}
           size={props.column.width}
-          setSize={width => props.setColumnSize?.(props.column.id, width)}
-          resetSize={() => props.resetColumnSize?.(props.column.id)}
+          setSize={width => props.setColumnSize?.(props.column.column, width)}
+          resetSize={() => props.resetColumnSize?.(props.column.column)}
         />
       </Show>
     </>

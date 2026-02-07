@@ -7,7 +7,7 @@
   justify-content: end;
   border-top: 1px solid var(--solid-tabular-border-color);
   border-right: 1px solid var(--solid-tabular-border-color);
-  background-color: var(--solid-tabular-cell-color);
+  background-color: var(--solid-tabular-header-color);
   padding: 0.25rem 0.5rem 0.25rem 0;
   box-sizing: border-box;
   color: var(--solid-tabular-rownum-color, inherit);

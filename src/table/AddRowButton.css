@@ -3,7 +3,7 @@
   margin: -6px 0 6px 0;
   cursor: pointer;
   border-top: 1px solid var(--solid-tabular-border-color);
-  background-color: var(--solid-tabular-cell-color);
+  background-color: var(--solid-tabular-header-color);
   z-index: 40;
   box-sizing: border-box;
 

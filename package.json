@@ -52,7 +52,7 @@
     "lint:types": "tsc --noEmit",
     "update-deps": "pnpm up -Li",
     "storybook": "storybook dev -p 6006",
-    "build:storybook": "storybook build"
+    "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"
@@ -81,7 +81,8 @@
     "vite": "^7.3.1",
     "vite-plugin-solid": "^2.11.10",
     "vite-tsconfig-paths": "^6.0.5",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@storybook/addon-a11y": "^10.2.7"
   },
   "keywords": [
     "solid"

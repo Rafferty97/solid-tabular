@@ -1,5 +1,8 @@
-.solid-tabular\/row .solid-tabular\/row-cell,
 .solid-tabular\/row .solid-tabular\/row-header {
+  background: var(--solid-tabular-header-color);
+}
+
+.solid-tabular\/row .solid-tabular\/row-cell {
   background: var(--solid-tabular-cell-color);
 }
 

@@ -97,7 +97,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
         value={value()}
         onChange={ev => props.setValue(ev.currentTarget.value)}
         onKeyDown={handleInputKeyDown}
-        readOnly={props.readonly}
+        // readOnly={props.readonly}
         onClick={() => (quickMode = false)}
         onDblClick={ev => ev.stopPropagation()}
         onPaste={ev => ev.stopPropagation()}
@@ -120,13 +120,13 @@ export const checkboxContent = () => (props: CellContentProps) => {
           class="solid-tabular/sr-only"
           checked={!!props.value}
           onChange={ev => props.setValue(ev.target.checked)}
-          disabled={props.readonly}
+          // disabled={props.readonly}
         />
         <div
           class={cn(
             'solid-tabular/checkbox-box',
             props.value ? 'solid-tabular/checked' : 'solid-tabular/unchecked',
-            props.readonly ? 'solid-tabular/readonly' : 'solid-tabular/editable',
+            // props.readonly ? 'solid-tabular/readonly' : 'solid-tabular/editable',
           )}
         >
           {!!props.value && (

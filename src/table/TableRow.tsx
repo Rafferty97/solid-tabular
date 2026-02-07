@@ -3,20 +3,20 @@ import { PositionedColumn } from './types'
 import { Cell } from './Cell'
 import './TableRow.css'
 
-export interface TableRowProps<K, T> {
-  columns: PositionedColumn<K, T>[]
-  rowIdx: number
+export interface TableRowProps<Column, Value> {
+  columns: PositionedColumn<Column, Value>[]
+  row: number
   top: number
   height: number
-  getCellValue: (row: number, column: PositionedColumn<K, T>) => T
-  setCellValue?: (rowIdx: number, colId: K, value: T) => void
+  getCellValue: (row: number, column: Column) => Value
+  setCellValue?: (row: number, column: Column, value: Value) => void
   onPointerDown: (ev: PointerEvent, i: number, j: number) => void
   onMouseContextDown?: (ev: MouseEvent, i: number, j: number) => void
   onContextMenu?: (ev: MouseEvent, i: number, j: number) => void
   onEditCell(pos: number): void
 }
 
-export function TableRow<K, T>(props: TableRowProps<K, T>) {
+export function TableRow<Column, Value>(props: TableRowProps<Column, Value>) {
   return (
     <div class="solid-tabular/row">
       <For each={props.columns}>
@@ -29,16 +29,15 @@ export function TableRow<K, T>(props: TableRowProps<K, T>) {
               transform: `translate(${col.left}px, ${props.top}px)`,
             }}
             onPointerDown={ev => {
-              if (ev.button === 0) props.onPointerDown(ev, props.rowIdx, col.index)
-              if (ev.button === 2) props.onMouseContextDown?.(ev, props.rowIdx, col.index)
+              if (ev.button === 0) props.onPointerDown(ev, props.row, col.index)
+              if (ev.button === 2) props.onMouseContextDown?.(ev, props.row, col.index)
             }}
-            onContextMenu={ev => props.onContextMenu?.(ev, props.rowIdx, col.index)}
+            onContextMenu={ev => props.onContextMenu?.(ev, props.row, col.index)}
           >
-            <Cell<T>
+            <Cell<Value>
               component={col.component}
-              readonly={col.readonly === true}
-              value={props.getCellValue(props.rowIdx, col)}
-              setValue={value => props.setCellValue?.(props.rowIdx, col.id, value)}
+              value={props.getCellValue(props.row, col.column)}
+              setValue={value => props.setCellValue?.(props.row, col.column, value)}
               onEdit={props.onEditCell}
             />
           </div>
