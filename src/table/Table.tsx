@@ -16,6 +16,7 @@ import { AddColumnButton } from './AddColumnButton'
 import { RowHeader } from './RowHeader'
 import { isEqual } from 'radashi'
 import { textContent } from 'src/components/CellContent'
+import { copyTableToClipboard, pasteTableFromClipboard } from 'src/lib/clipboard'
 import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
@@ -443,17 +444,45 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     const range = activeRange()
     if (!range) return
 
-    props.onCopy?.(range.min, range.max)
+    if (props.onCopy) {
+      props.onCopy(range.min, range.max)
+    } else {
+      const table: string[][] = []
+      for (let i = range.min[0]; i <= range.max[0]; i++) {
+        const row: string[] = []
+        for (let j = range.min[1]; j <= range.max[1]; j++) {
+          row.push(String(props.getCellValue(i, props.columns[j]!)))
+        }
+        table.push(row)
+      }
+      copyTableToClipboard(table)
+    }
   }
 
   const handlePaste = async (ev?: ClipboardEvent) => {
     ev?.preventDefault()
-    if (!props.rowsEditable) return
+    // if (!props.rowsEditable) return
 
     const range = activeRange()
     if (!range) return
 
-    props.onPaste?.(range.min, range.max)
+    if (props.onPaste) {
+      props.onPaste(range.min, range.max)
+    } else {
+      pasteTableFromClipboard().then(table => {
+        if (!props.setCellValue) return
+        if (!table) return
+        let i = range.min[0]
+        for (const row of table) {
+          let j = range.min[1]
+          for (const cell of row) {
+            props.setCellValue(i, props.columns[j]!, cell as any)
+            j += 1
+          }
+          i += 1
+        }
+      })
+    }
   }
 
   // Handle keyboard events
@@ -564,7 +593,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       onPointerUp={onCellUp}
       tabIndex={-1}
     >
-      <div ref={focusEl} class="solid-tabular/focus-proxy" tabIndex={-1} contentEditable />
+      <div ref={focusEl} class="solid-tabular/focus-proxy" tabIndex={-1} />
 
       {/* Corner box */}
       <div class="solid-tabular/corner-box">
