@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from 'storybook-solidjs-vite'
-import { ActiveRange, Table } from 'src'
 import { createSignal } from 'solid-js'
+import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { fn } from 'storybook/test'
+import { ActiveRange, Table } from 'src'
 
 const meta = {
   args: {
