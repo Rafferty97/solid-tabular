@@ -379,15 +379,31 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   // Handle cell and cell range selection by mouse
   const [cellDragging, setCellDragging] = createSignal<DragMode>()
 
-  const onCellDown = (ev: MouseEvent, i: number | null, j: number | null) => {
+  const onCellDown = (ev: PointerEvent, i: number | null, j: number | null) => {
     if (ev.shiftKey) {
       rangeToCell(i ?? undefined, j ?? undefined)
     } else {
       moveToCell(i ?? undefined, j ?? undefined)
     }
     setCellDragging(i == null ? 'rows' : j == null ? 'cols' : 'cell')
-    document.addEventListener('mouseup', () => setCellDragging(undefined), { once: true })
+    tableEl?.setPointerCapture(ev.pointerId)
   }
+
+  let [x, y] = [0, 0]
+
+  const onCellMove = (ev?: MouseEvent) => {
+    if (!cellDragging()) return
+    if (ev) {
+      const rect = tableEl!.getBoundingClientRect()
+      x = ev.pageX + viewport().left - rect.left
+      y = ev.pageY + viewport().top - rect.top
+    }
+    const i = Math.floor((y - colHeaderHeight()) / cellHeight())
+    const j = findIndex(horizSizes().columns, c => c.right > x)
+    rangeToCell(cellDragging() == 'rows' ? undefined : i, cellDragging() == 'cols' ? undefined : j)
+  }
+
+  const onCellUp = () => setCellDragging(undefined)
 
   const onCellContextDown = (_ev: MouseEvent, i: number, j: number) => {
     moveToCellIfOutside(i, j)
@@ -396,28 +412,6 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   const onContextMenu = (_ev: MouseEvent, i: number, j: number) => {
     moveToCellIfOutside(i, j)
   }
-
-  onMount(() => {
-    let [x, y] = [0, 0]
-
-    const handler = (ev?: MouseEvent) => {
-      if (!cellDragging()) return
-      if (ev) {
-        const rect = tableEl!.getBoundingClientRect()
-        x = ev.pageX + viewport().left - rect.left
-        y = ev.pageY + viewport().top - rect.top
-      }
-      const i = Math.floor((y - colHeaderHeight()) / cellHeight())
-      const j = findIndex(horizSizes().columns, c => c.right > x)
-      rangeToCell(
-        cellDragging() == 'rows' ? undefined : i,
-        cellDragging() == 'cols' ? undefined : j,
-      )
-    }
-
-    document.addEventListener('mousemove', handler)
-    onCleanup(() => document.removeEventListener('mousemove', handler))
-  })
 
   // Start editing a cell, with an optional cursor position
   const editCell = (pos: number) => {
@@ -548,6 +542,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     <div
       ref={tableEl}
       class="solid-tabular/table"
+      style={{ cursor: cellDragging() ? 'cell' : undefined }}
       onKeyDown={handleKeyDown}
       onCopy={handleCopy}
       onPaste={handlePaste}
@@ -555,6 +550,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
         if (shouldRestoreScroll) return
         props.onScrollPositionChange?.(ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop)
       }}
+      onMouseMove={onCellMove}
+      onMouseUp={onCellUp}
       tabIndex={-1}
     >
       <div ref={focusEl} class="solid-tabular/focus-proxy" tabIndex={-1} contentEditable />
@@ -638,7 +635,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               isActive={item.index >= activeRange().min[0] && item.index <= activeRange().max[0]}
               getCellValue={props.getCellValue}
               setCellValue={props.setCellValue}
-              onMouseDown={onCellDown}
+              onPointerDown={onCellDown}
               onMouseContextDown={onCellContextDown}
               onContextMenu={onContextMenu}
               onEditCell={editCell}

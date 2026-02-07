@@ -11,7 +11,7 @@ export interface TableRowProps<K, T> {
   isActive: boolean
   getCellValue: (row: number, column: PositionedColumn<K, T>) => T
   setCellValue?: (rowIdx: number, colId: K, value: T) => void
-  onMouseDown: (ev: MouseEvent, i: number, j: number) => void
+  onPointerDown: (ev: PointerEvent, i: number, j: number) => void
   onMouseContextDown?: (ev: MouseEvent, i: number, j: number) => void
   onContextMenu?: (ev: MouseEvent, i: number, j: number) => void
   onEditCell(pos: number): void
@@ -29,8 +29,8 @@ export function TableRow<K, T>(props: TableRowProps<K, T>) {
               height: `${props.height}px`,
               transform: `translate(${col.left}px, ${props.top}px)`,
             }}
-            onMouseDown={ev => {
-              if (ev.button === 0) props.onMouseDown(ev, props.rowIdx, col.index)
+            onPointerDown={ev => {
+              if (ev.button === 0) props.onPointerDown(ev, props.rowIdx, col.index)
               if (ev.button === 2) props.onMouseContextDown?.(ev, props.rowIdx, col.index)
             }}
             onContextMenu={ev => props.onContextMenu?.(ev, props.rowIdx, col.index)}
