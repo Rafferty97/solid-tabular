@@ -5,6 +5,7 @@ export interface RowHeaderProps {
   width: number
   height: number
   y: number
+  onPointerDown?: (ev: PointerEvent) => void
 }
 
 export function RowHeader(props: RowHeaderProps) {
@@ -16,6 +17,7 @@ export function RowHeader(props: RowHeaderProps) {
         height: `${props.height}px`,
         transform: `translateY(${props.y}px)`,
       }}
+      onPointerDown={props.onPointerDown}
     >
       <span>{props.index + 1}</span>
     </div>

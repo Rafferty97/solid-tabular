@@ -9,7 +9,7 @@ import {
   createEffect,
 } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
-import type { ActiveRange, CellIndex, Column } from './types'
+import { DragMode, type ActiveRange, type CellIndex, type Column } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
 import { isPrintableKey } from 'src/lib/isPrintableKey'
 import { findIndex } from 'src/lib/findIndex'
@@ -19,7 +19,6 @@ import { CellInputContainer } from './Cell'
 import { Outline } from './Outline'
 import { watchViewport } from 'src/lib/watchViewport'
 import { modifierKey } from 'src/lib/modifierKey'
-import { moveDown, moveLeft, moveRight, moveUp } from 'src/lib/cellMovement'
 import { createEvent } from 'src/lib/createEvent'
 import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
@@ -118,8 +117,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
       cell[1] === max[1] ? min[1] : max[1],
     ] as const
     const size = [1 + max[0] - min[0], 1 + max[1] - min[1]] as const
-    const bounds = range ?? { min: minCell(), max: maxCell() }
-    return { cell, shiftCell, min, max, size, bounds }
+    return { cell, shiftCell, min, max, size }
   })
 
   // The active cell, which may be within a range
@@ -309,30 +307,49 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   const focus = () => focusEl?.focus({ preventScroll: true })
 
   // Moves focus to the given cell
-  const moveToCell = (i: number, j: number) => {
-    i = Math.max(Math.min(i, numRows() - 1), 0)
-    j = Math.max(Math.min(j, numCols() - 1), 0)
-    const cell = [i, j] as const
-    props.setActiveRange?.({ cell })
+  const moveToCell = (i?: number, j?: number) => {
+    if (i != null) i = Math.max(Math.min(i, numRows() - 1), 0)
+    if (j != null) j = Math.max(Math.min(j, numCols() - 1), 0)
+
+    const min = [i ?? 0, j ?? 0] as const
+    const max = [i ?? numRows() - 1, j ?? numCols() - 1] as const
+    const cell = min
+    const range = i == null || j == null ? { min, max } : undefined
+
+    props.setActiveRange?.({ cell, range })
     scrollToCell(i, j)
     focus()
   }
 
   // Moves focus to the given cell without modifying the selected range
-  const moveToCellWithinRange = (cell: CellIndex) => {
-    props.setActiveRange?.({ ...props.activeRange, cell })
+  const moveWithinRange = ([i, j]: CellIndex) => {
+    const range = props.activeRange.range
+    const min = range?.min ?? [0, 0]
+    const max = range?.max ?? [numRows() - 1, numCols() - 1]
+
+    const ai = i + (j < min[1] ? -1 : j > max[1] ? 1 : 0)
+    const aj = j + (i < min[0] ? -1 : i > max[0] ? 1 : 0)
+    const cell = [
+      ai < min[0] ? max[0] : ai > max[0] ? min[0] : ai,
+      aj < min[1] ? max[1] : aj > max[1] ? min[1] : aj,
+    ] as const
+
+    props.setActiveRange?.({ cell, range })
     scrollToCell(cell[0], cell[1])
     focus()
   }
 
   // Moves the cell range to the given cell
-  const rangeToCell = (i: number, j: number) => {
-    i = Math.max(Math.min(i, numRows() - 1), 0)
-    j = Math.max(Math.min(j, numCols() - 1), 0)
+  const rangeToCell = (i?: number, j?: number) => {
+    if (i != null) i = Math.max(Math.min(i, numRows() - 1), 0)
+    if (j != null) j = Math.max(Math.min(j, numCols() - 1), 0)
 
     const { cell } = props.activeRange
-    const min = [Math.min(cell[0], i), Math.min(cell[1], j)] as const
-    const max = [Math.max(cell[0], i), Math.max(cell[1], j)] as const
+    const min = [Math.min(cell[0], i ?? 0), Math.min(cell[1], j ?? 0)] as const
+    const max = [
+      Math.max(cell[0], i ?? numRows() - 1),
+      Math.max(cell[1], j ?? numCols() - 1),
+    ] as const
     props.setActiveRange?.({ cell, range: { min, max } })
     scrollToCell(i, j)
     focus()
@@ -352,17 +369,24 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     }
   }
 
-  // Handle cell and cell range selection by mouse
-  const [cellDragging, setCellDragging] = createSignal(false)
+  // Selects all cells in a row, column or the whole table
+  const selectAll = (i: number | null, j: number | null) => {
+    const min = [i ?? 0, j ?? 0] as const
+    const max = [i ?? numRows() - 1, j ?? numCols() - 1] as const
+    props.setActiveRange?.({ cell: min, range: { min, max } })
+  }
 
-  const onCellDown = (ev: MouseEvent, i: number, j: number) => {
+  // Handle cell and cell range selection by mouse
+  const [cellDragging, setCellDragging] = createSignal<DragMode>()
+
+  const onCellDown = (ev: MouseEvent, i: number | null, j: number | null) => {
     if (ev.shiftKey) {
-      rangeToCell(i, j)
+      rangeToCell(i ?? undefined, j ?? undefined)
     } else {
-      moveToCell(i, j)
+      moveToCell(i ?? undefined, j ?? undefined)
     }
-    setCellDragging(true)
-    document.addEventListener('mouseup', () => setCellDragging(false), { once: true })
+    setCellDragging(i == null ? 'rows' : j == null ? 'cols' : 'cell')
+    document.addEventListener('mouseup', () => setCellDragging(undefined), { once: true })
   }
 
   const onCellContextDown = (_ev: MouseEvent, i: number, j: number) => {
@@ -385,7 +409,10 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
       }
       const i = Math.floor((y - colHeaderHeight()) / cellHeight())
       const j = findIndex(horizSizes().columns, c => c.right > x)
-      rangeToCell(i, j)
+      rangeToCell(
+        cellDragging() == 'rows' ? undefined : i,
+        cellDragging() == 'cols' ? undefined : j,
+      )
     }
 
     document.addEventListener('mousemove', handler)
@@ -432,7 +459,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
   // Handle keyboard events
   const handleKeyDown = (ev: KeyboardEvent) => {
-    const { cell, shiftCell, min, max, bounds } = activeRange()
+    const { cell, shiftCell, min, max } = activeRange()
 
     const delta = ev[modifierKey] ? Infinity : 1
 
@@ -454,15 +481,15 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
     if (ev.key == 'Tab') {
       ev.preventDefault()
-      const target = (ev.shiftKey ? moveLeft : moveRight)(cell, bounds)
-      moveToCellWithinRange(target)
+      const delta = ev.shiftKey ? -1 : 1
+      moveWithinRange([cell[0], cell[1] + delta])
       return
     }
 
     if (ev.key == 'Enter') {
       ev.preventDefault()
-      const target = (ev.shiftKey ? moveUp : moveDown)(cell, bounds)
-      moveToCellWithinRange(target)
+      const delta = ev.shiftKey ? -1 : 1
+      moveWithinRange([cell[0] + delta, cell[1]])
       return
     }
 
@@ -478,9 +505,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
     if (ev.key === 'a' && ev[modifierKey] && !ev.shiftKey) {
       ev.preventDefault()
-      const min = [0, 0] as const
-      const max = [numRows() - 1, numCols() - 1] as const
-      props.setActiveRange?.({ ...props.activeRange, range: { min, max } })
+      selectAll(null, null)
       return
     }
   }
@@ -536,9 +561,10 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
       {/* Corner box */}
       <div class="solid-tabular/corner-box">
-        <div style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}>
-          <span>#</span>
-        </div>
+        <div
+          style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}
+          onPointerDown={() => selectAll(null, null)}
+        />
         <Outline
           rect={cellIntersectsLeft() && cellIntersectsTop() ? activeRangeOutline() : undefined}
           headerLeft={rowHeaderWidth()}
@@ -558,6 +584,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               setColumnName={props.setColumnName}
               setColumnSize={props.setColumnSize}
               resetColumnSize={props.resetColumnSize}
+              onPointerDown={ev => onCellDown(ev, null, column.index)}
             />
           )}
         </For>
@@ -587,6 +614,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               width={rowHeaderWidth()}
               height={cellHeight()}
               y={item.start}
+              onPointerDown={ev => onCellDown(ev, item.index, null)}
             />
           )}
         </For>

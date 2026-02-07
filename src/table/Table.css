@@ -5,8 +5,22 @@
   --solid-tabular-cell-hover-color: oklch(96.7% 0.003 264.542);
   --solid-tabular-border-color: oklch(87.2% 0.01 258.338);
   --solid-tabular-placeholder-color: oklch(70.7% 0.022 261.325);
-  --solid-tabular-accent-color: rgb(83, 83, 223);
+  --solid-tabular-accent-color: oklch(45.7% 0.24 277.023);
+  --solid-tabular-shade-color: rgba(0, 0, 0, 0.12);
   --solid-tabular-font-size-row-num: 1em;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --solid-tabular-bg-color: oklch(27.8% 0.033 256.848);
+    --solid-tabular-text-color: white;
+    --solid-tabular-cell-color: oklch(21% 0.034 264.665);
+    --solid-tabular-cell-hover-color: oklch(13% 0.028 261.692);
+    --solid-tabular-border-color: oklch(37.3% 0.034 259.733);
+    --solid-tabular-placeholder-color: oklch(44.6% 0.03 256.802);
+    --solid-tabular-accent-color: oklch(67.3% 0.182 276.935);
+    --solid-tabular-shade-color: rgba(255, 255, 255, 0.08);
+  }
 }
 
 .solid-tabular\/table {
@@ -33,6 +47,7 @@
     left: 0;
     height: 0;
     z-index: 40;
+    cursor: cell;
 
     > :first-child {
       display: flex;

@@ -8,5 +8,5 @@
 .solid-tabular\/shade {
   position: absolute;
   inset: 2px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--solid-tabular-shade-color);
 }

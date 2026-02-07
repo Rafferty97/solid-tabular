@@ -11,6 +11,7 @@ export interface ColumnHeaderProps<K, T> {
   setColumnName?: (id: K, name: string) => void
   setColumnSize?: (id: K, width: number) => void
   resetColumnSize?: (id: K) => void
+  onPointerDown?: (ev: PointerEvent) => void
 }
 
 export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
@@ -23,6 +24,7 @@ export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
           height: `${props.height}px`,
           transform: `translate(${props.column.left}px, 0px)`,
         }}
+        onPointerDown={props.onPointerDown}
       >
         <div>
           <Renameable

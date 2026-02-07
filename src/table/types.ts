@@ -31,3 +31,5 @@ export type PositionedColumn<K, T> = Column<K, T> & {
   right: number
   width: number
 }
+
+export type DragMode = 'cell' | 'cols' | 'rows'

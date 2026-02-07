@@ -32,12 +32,13 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: var(--solid-tabular-cell-color);
     padding: 0.25rem;
     outline: none;
     border: none;
     font: inherit;
+    color: inherit;
     box-sizing: border-box;
+    background-color: var(--solid-tabular-cell-color);
   }
 
   input:focus {

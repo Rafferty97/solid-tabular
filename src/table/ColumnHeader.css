@@ -5,6 +5,7 @@
   border-bottom: 1px solid var(--solid-tabular-border-color);
   background-color: var(--solid-tabular-cell-color);
   box-sizing: border-box;
+  cursor: cell;
 
   > :first-child {
     position: absolute;

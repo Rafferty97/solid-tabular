@@ -12,4 +12,5 @@
   box-sizing: border-box;
   color: var(--solid-tabular-rownum-color, inherit);
   font-size: var(--solid-tabular-font-size-row-num, inherit);
+  cursor: cell;
 }

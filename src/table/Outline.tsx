@@ -31,8 +31,8 @@ export function Outline(props: OutlineProps) {
           width: `${props.headerLeft ? px(2) : props.rect!.width + expand(2)}px`,
           height: `${props.headerTop ? px(2) : props.rect!.height + expand(2)}px`,
           'box-shadow': `
-              inset 0 0 0 ${px(2)}px var(--solid-tabular-outline-color, black),
-              inset 0 0 0 ${px(3)}px white`,
+              inset 0 0 0 ${px(2)}px var(--solid-tabular-accent-color),
+              inset 0 0 0 ${px(3)}px var(--solid-tabular-cell-color)`,
         }}
       >
         <Show when={props.highlight}>
