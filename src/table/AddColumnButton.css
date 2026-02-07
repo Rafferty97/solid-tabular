@@ -8,14 +8,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
+    border: 1px solid var(--solid-tabular-border-color);
     border-top: none;
-    background-color: white;
+    background-color: var(--solid-tabular-cell-color);
     padding: 0.25rem 0;
     box-sizing: border-box;
 
     &:hover {
-      background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
+      background-color: var(--solid-tabular-cell-hover-color);
     }
   }
 }

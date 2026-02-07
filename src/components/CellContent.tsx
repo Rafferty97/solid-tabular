@@ -32,7 +32,7 @@ export const textContent =
       <div
         onDblClick={handleDoubleClick}
         class="solid-tabular/text-content"
-        style={{ color: format.color ?? 'black' }}
+        style={{ color: format.color ?? 'inherit' }}
       >
         {format.prefix?.(props.value)}
         <div

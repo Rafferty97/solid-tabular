@@ -49,6 +49,8 @@ export const BasicUsage: Story = {
             })
           }
           cellsEditable
+          rowsEditable
+          columnsEditable
         />
       </div>
     )

@@ -19,7 +19,7 @@
   > div {
     opacity: 0;
     transition: opacity 0.15s;
-    background-color: var(--solid-tabular-outline-color, black);
+    background-color: var(--solid-tabular-accent-color);
   }
 
   &:hover > div,

@@ -2,13 +2,13 @@
   display: flex;
   margin: -6px 0 6px 0;
   cursor: pointer;
-  border-top: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
-  background-color: white;
+  border-top: 1px solid var(--solid-tabular-border-color);
+  background-color: var(--solid-tabular-cell-color);
   z-index: 40;
   box-sizing: border-box;
 
   &:hover {
-    background-color: oklch(96.7% 0.003 264.542); /* gray-100 */
+    background-color: var(--solid-tabular-cell-hover-color);
   }
 
   > :first-child {
@@ -24,7 +24,6 @@
     .solid-tabular\/plus-btn {
       padding-right: 0.5rem;
       text-align: right;
-      color: oklch(70.7% 0.022 261.325); /* gray-400 */
       box-sizing: border-box;
     }
 

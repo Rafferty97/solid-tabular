@@ -1,9 +1,9 @@
 .solid-tabular\/column-header {
   position: absolute;
   top: 0;
-  border-left: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
-  border-bottom: 1px solid oklch(87.2% 0.01 258.338); /* gray-300 */
-  background-color: white;
+  border-left: 1px solid var(--solid-tabular-border-color);
+  border-bottom: 1px solid var(--solid-tabular-border-color);
+  background-color: var(--solid-tabular-cell-color);
   box-sizing: border-box;
 
   > :first-child {

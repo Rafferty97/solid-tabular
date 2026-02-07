@@ -9,10 +9,6 @@
     text-overflow: ellipsis;
     white-space: pre;
     user-select: none;
-
-    &.solid-tabular\/empty {
-      color: oklch(70.7% 0.022 261.325); /* gray-400 */
-    }
   }
 
   input {
@@ -32,8 +28,12 @@
     &[data-visible='true'] {
       width: auto;
       border-radius: 4px;
-      background-color: white;
+      background-color: var(--solid-tabular-cell-color);
       padding: 0.25rem;
     }
   }
+}
+
+.solid-tabular\/placeholder {
+  color: var(--solid-tabular-placeholder-color);
 }

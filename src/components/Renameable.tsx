@@ -89,7 +89,7 @@ export function Renameable(props: RenameableProps) {
       onDblClick={handleDblClick}
       ref={containerEl}
     >
-      <div class={cn({ 'solid-tabular/empty': !props.value.length })} title={shownValue()}>
+      <div class={cn({ 'solid-tabular/placeholder': !props.value.length })} title={shownValue()}>
         {shownValue()}
       </div>
       <input

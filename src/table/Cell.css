@@ -4,13 +4,6 @@
   height: 100%;
   align-items: center;
   outline: none;
-
-  /* .null {
-    width: 100%;
-    text-align: center;
-    font-style: italic;
-    color: oklch(87.2% 0.01 258.338); /* gray-300 * /
-  } */
 }
 
 .solid-tabular\/cell-input-container {

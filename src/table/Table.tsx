@@ -28,6 +28,7 @@ import { isEqual } from 'radashi'
 import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
+const DEFAULT_CELL_HEIGHT = 29
 
 export interface TableProps<K = string, T = string> {
   /** The columns. */
@@ -40,6 +41,8 @@ export interface TableProps<K = string, T = string> {
   rowsEditable?: boolean
   /** Whether cells can be edited. */
   cellsEditable?: boolean
+  /** Height of cells in pixels. */
+  cellHeight?: number
   /** The state of the selected cell or cells in the table. */
   activeRange: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
@@ -132,7 +135,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
   // Calculate some measurements
   const px = () => 1 / devicePixelRatio()
-  const cellHeight = createSize(29)
+  const cellHeight = createSize(() => props.cellHeight ?? DEFAULT_CELL_HEIGHT)
   const rowHeaderWidth = () => rowHeaderSize().width
   const colHeaderHeight = cellHeight
   const scrollPadding = createSize(6)
@@ -168,7 +171,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
         props.onViewportChanged?.(viewportRange[0], viewportRange[1])
       }
     },
-    overscan: 10, // FIXME: Right number?
+    overscan: 10,
   })
 
   // Restore scroll position when data is ready
@@ -229,7 +232,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     createMemo(() => props.columns.slice(visibleColumnRange().start, visibleColumnRange().end)),
     (column, localIndex) => {
       const index = () => localIndex() + visibleColumnRange().start
-      const size = createMemo(() => horizSizes().columns[index()]) // FIXME: Can use memo here?
+      const size = createMemo(() => horizSizes().columns[index()])
       return {
         id: column.id,
         get name() {
