@@ -36,7 +36,7 @@ export interface TableProps<K = string, T = string> {
   /** Height of cells in pixels. */
   cellHeight?: number
   /** The state of the selected cell or cells in the table. */
-  activeRange: ActiveRange
+  activeRange?: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
   setActiveRange?: (range: ActiveRange) => void
   /** Gets the value in a cell. */
@@ -89,11 +89,10 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   // Row and column counts
   const numRows = () => props.numRows
   const numCols = () => props.columns.length
-  const minCell = () => [0, 0] as const
-  const maxCell = () => [numRows() - 1, numCols() - 1] as const
 
   // The active cell range
   const activeRange = createMemo(() => {
+    if (!props.activeRange) return undefined
     const { cell, range } = props.activeRange
     const maxRow = Math.max(numRows() - 1, 0)
     const maxCol = Math.max(numCols() - 1, 0)
@@ -114,13 +113,15 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   })
 
   // The active cell, which may be within a range
-  const activeCell = () => activeRange().cell
+  const activeCell = () => activeRange()?.cell
 
   // Details about the active cell
   const activeCellData = createMemo(() => {
-    const [rowIdx, colIdx] = activeCell()
-    const column = props.columns[colIdx]
-    if (rowIdx >= props.numRows || !column) return undefined
+    const cell = activeCell()
+    if (!cell) return undefined
+    const rowIdx = cell[0]
+    const column = props.columns[cell[1]]
+    if (cell[0] >= props.numRows || !column) return undefined
     return { rowIdx, column }
   })
 
@@ -316,7 +317,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
   // Moves focus to the given cell without modifying the selected range
   const moveWithinRange = ([i, j]: CellIndex) => {
-    const range = props.activeRange.range
+    const range = props.activeRange?.range
     const min = range?.min ?? [0, 0]
     const max = range?.max ?? [numRows() - 1, numCols() - 1]
 
@@ -334,6 +335,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
   // Moves the cell range to the given cell
   const rangeToCell = (i?: number, j?: number) => {
+    if (!props.activeRange) return
+
     if (i != null) i = Math.max(Math.min(i, numRows() - 1), 0)
     if (j != null) j = Math.max(Math.min(j, numCols() - 1), 0)
 
@@ -350,12 +353,14 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
 
   // Moves focus to the given cell, but only if it is outside the active range
   const moveToCellIfOutside = (i: number, j: number) => {
+    const range = activeRange()
+    if (!range) return
+
     i = Math.max(Math.min(i, numRows() - 1), 0)
     j = Math.max(Math.min(j, numCols() - 1), 0)
     const cell = [i, j] as const
 
-    const { min, max } = activeRange()
-    if (i < min[0] || i > max[0] || j < min[1] || j > max[1]) {
+    if (i < range.min[0] || i > range.max[0] || j < range.min[1] || j > range.max[1]) {
       props.setActiveRange?.({ cell })
       scrollToCell(i, j)
       focus()
@@ -433,6 +438,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     ev?.preventDefault()
 
     const range = activeRange()
+    if (!range) return
+
     props.onCopy?.(range.min, range.max)
   }
 
@@ -441,13 +448,17 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     if (!props.rowsEditable) return
 
     const range = activeRange()
+    if (!range) return
+
     props.onPaste?.(range.min, range.max)
   }
 
   // Handle keyboard events
   const handleKeyDown = (ev: KeyboardEvent) => {
-    const { cell, shiftCell, min, max } = activeRange()
+    const range = activeRange()
+    if (!range) return
 
+    const { cell, shiftCell, min, max } = range
     const delta = ev[modifierKey] ? Infinity : 1
 
     if (ev.key.startsWith('Arrow')) {
@@ -507,7 +518,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
   }
 
   // Compute dimensions for active cell outline
-  const calcOutline = (min: CellIndex, max: CellIndex) => {
+  const calcOutline = (min?: CellIndex, max?: CellIndex) => {
+    if (!min || !max) return undefined
     const left = columnSize(min[1])?.left ?? 0
     const right = columnSize(max[1])?.right ?? 0
     const width = right - left + px()
@@ -517,16 +529,18 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
     return { left, right, top, bottom, width, height }
   }
   const activeCellOutline = createMemo(() => calcOutline(activeCell(), activeCell()))
-  const activeRangeOutline = createMemo(() => calcOutline(activeRange().min, activeRange().max))
+  const activeRangeOutline = createMemo(() => calcOutline(activeRange()?.min, activeRange()?.max))
 
   // Monitor scroll position
   const cellIntersectsLeft = createMemo(() => {
     const outline = activeRangeOutline()
+    if (!outline) return false
     const x = viewport().left + rowHeaderWidth() - outline.left
     return x >= 0 && x <= outline.width
   })
   const cellIntersectsTop = createMemo(() => {
     const outline = activeRangeOutline()
+    if (!outline) return false
     const y = viewport().top + colHeaderHeight() - outline.top
     return y >= 0 && y <= outline.height
   })
@@ -543,8 +557,8 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
         if (shouldRestoreScroll) return
         props.onScrollPositionChange?.(ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop)
       }}
-      onMouseMove={onCellMove}
-      onMouseUp={onCellUp}
+      onPointerMove={onCellMove}
+      onPointerUp={onCellUp}
       tabIndex={-1}
     >
       <div ref={focusEl} class="solid-tabular/focus-proxy" tabIndex={-1} contentEditable />
@@ -626,7 +640,6 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
               rowIdx={item.index}
               top={item.start}
               height={item.size}
-              isActive={item.index >= activeRange().min[0] && item.index <= activeRange().max[0]}
               getCellValue={props.getCellValue}
               setCellValue={props.setCellValue}
               onPointerDown={onCellDown}
@@ -641,7 +654,7 @@ export default function Table<K = string, T = unknown>(props: TableProps<K, T>) 
           {({ rowIdx, column }) => (
             <CellInputContainer
               component={column.component}
-              rect={activeCellOutline()}
+              rect={activeCellOutline()!}
               value={props.getCellValue(rowIdx, column)}
               readonly={!props.cellsEditable || !!column.readonly}
               setValue={value => props.setCellValue?.(rowIdx, column.id, value)}

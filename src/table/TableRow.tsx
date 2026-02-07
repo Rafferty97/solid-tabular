@@ -8,7 +8,6 @@ export interface TableRowProps<K, T> {
   rowIdx: number
   top: number
   height: number
-  isActive: boolean
   getCellValue: (row: number, column: PositionedColumn<K, T>) => T
   setCellValue?: (rowIdx: number, colId: K, value: T) => void
   onPointerDown: (ev: PointerEvent, i: number, j: number) => void
@@ -19,7 +18,7 @@ export interface TableRowProps<K, T> {
 
 export function TableRow<K, T>(props: TableRowProps<K, T>) {
   return (
-    <div class="solid-tabular/row" data-active={props.isActive}>
+    <div class="solid-tabular/row">
       <For each={props.columns}>
         {col => (
           <div
