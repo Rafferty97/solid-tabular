@@ -1,18 +1,32 @@
-import { createSignal } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { fn } from 'storybook/test'
 import { ActiveRange, Table } from 'src'
+import Papa from 'papaparse'
 
 const meta = {
   args: {
-    columns: ['A', 'B', 'C', 'D', 'E'],
-    numRows: 10,
     accentColor: '#de3b84',
     setCellValue: fn(),
   },
   render: props => {
     const [activeRange, setActiveRange] = createSignal<ActiveRange>()
     const [widths, setWidths] = createSignal(new Map<string, number>())
+
+    const [data, setData] = createSignal<Record<string, unknown>[]>(props.data ?? [])
+
+    onMount(() => {
+      if (!props.url) return
+      fetch(props.url)
+        .then(resp => (resp.ok ? resp.text() : ''))
+        .then(raw => {
+          const parsed = Papa.parse<Record<string, unknown>>(raw, {
+            header: true,
+            skipEmptyLines: true,
+          })
+          setData(parsed.data)
+        })
+    })
 
     return (
       <div
@@ -24,8 +38,11 @@ const meta = {
         }}
       >
         <Table
-          {...props}
-          getCellValue={(row, col) => `${col}${row}`}
+          columns={Object.keys(data()[0] ?? {})}
+          numRows={data().length}
+          getCellValue={(row, col) => data()[row]![col]!}
+          // getCellValue={(row, col) => `${col}${row}`}
+          setCellValue={props.setCellValue}
           activeRange={activeRange()}
           setActiveRange={setActiveRange}
           getColumnSize={col => widths().get(col)}
@@ -38,10 +55,10 @@ const meta = {
     )
   },
 } satisfies Meta<{
-  columns: string[]
-  numRows: number
+  data?: Record<string, unknown>[]
+  url?: string
   accentColor: string
-  setCellValue: (row: number, column: string, value: string) => void
+  setCellValue: (row: number, column: string, value: unknown) => void
 }>
 
 export default meta
@@ -49,5 +66,16 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const BasicUsage = {
-  args: {},
+  args: {
+    data: [
+      { A: 1, B: 2, C: 3 },
+      { A: 4, B: 5, C: 6 },
+    ],
+  },
+} satisfies Story
+
+export const MediumSizedTable = {
+  args: {
+    url: new URL('/src/stories/stats.csv', import.meta.url),
+  },
 } satisfies Story

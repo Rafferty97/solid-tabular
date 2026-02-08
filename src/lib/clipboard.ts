@@ -43,15 +43,15 @@ export async function pasteTableFromClipboard(): Promise<string[][] | null> {
         return parseTextTable(text)
       }
     }
-  } catch (e) {
+  } catch (_err) {
     // Ignore error, try readText
   }
 
   try {
     const text = await navigator.clipboard.readText()
     return parseTextTable(text)
-  } catch (e) {
-    console.error('Failed to read clipboard', e)
+  } catch (_err) {
+    // console.error('Failed to read clipboard', e)
     return null
   }
 }
