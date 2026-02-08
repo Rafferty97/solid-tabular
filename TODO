@@ -2,4 +2,3 @@
 - Extract out cell content
 - Lift cell component to top level?
 - Column auto-sizing
-- Fix reactivity in Basic Usage story

@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js'
+import { createMemo, createSignal, onMount } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { fn } from 'storybook/test'
 import { ActiveRange, Table } from 'src'
@@ -13,7 +13,7 @@ const meta = {
     const [activeRange, setActiveRange] = createSignal<ActiveRange>()
     const [widths, setWidths] = createSignal(new Map<string, number>())
 
-    const [data, setData] = createSignal<Record<string, unknown>[]>(props.data ?? [])
+    const [fetchedData, setFetchedData] = createSignal<Record<string, unknown>[]>()
 
     onMount(() => {
       if (!props.url) return
@@ -24,9 +24,11 @@ const meta = {
             header: true,
             skipEmptyLines: true,
           })
-          setData(parsed.data)
+          setFetchedData(parsed.data)
         })
     })
+
+    const data = createMemo(() => fetchedData() ?? props.data ?? [])
 
     return (
       <div

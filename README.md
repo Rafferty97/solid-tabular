@@ -12,6 +12,8 @@
 
 Spreadsheet-like table UI for SolidJS.
 
+__Demo:__ https://alexanderrafferty.com/projects/solid-tabular/
+
 ⚠️ This library is currently in early development, and breaking changes will definitely occur.
 
 ## Features
