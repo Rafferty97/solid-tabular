@@ -43,7 +43,6 @@ const meta = {
           columns={Object.keys(data()[0] ?? {})}
           numRows={data().length}
           getCellValue={(row, col) => data()[row]![col]!}
-          // getCellValue={(row, col) => `${col}${row}`}
           setCellValue={props.setCellValue}
           activeRange={activeRange()}
           setActiveRange={setActiveRange}

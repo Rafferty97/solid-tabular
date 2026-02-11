@@ -22,8 +22,11 @@ export interface CellInputProps<T> {
 }
 
 export type CellContentProps<T = unknown> = {
+  /** The value in the cell. */
   value: T
+  /** Whether the cell is in "edit mode." */
   editing: boolean
+  /** Updates the value of the cell. */
   setValue(value: T): void
   onEdit(pos: number): void
   onFinishedEditing(): void

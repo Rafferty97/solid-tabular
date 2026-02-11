@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createSignal, mapArray, createEffect } from 'solid-js'
+import { For, Show, createMemo, createSignal, mapArray, createEffect, Component } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
 import type { DragMode, ActiveRange, CellIndex } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
@@ -6,7 +6,7 @@ import { isPrintableKey } from 'src/lib/isPrintableKey'
 import { findIndex } from 'src/lib/findIndex'
 import { ColumnHeader } from './ColumnHeader'
 import { TableRow } from './TableRow'
-import { CellInputContainer } from './Cell'
+import { CellContentProps, CellInputContainer } from './Cell'
 import { Outline } from './Outline'
 import { watchViewport } from 'src/lib/watchViewport'
 import { modifierKey } from 'src/lib/modifierKey'
@@ -21,6 +21,7 @@ import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80
 const DEFAULT_CELL_HEIGHT = 29
+const DEFAULT_CELL_CONTENT = textContent()
 
 export interface TableProps<Column, Value = unknown> {
   /** The columns. */
@@ -35,6 +36,10 @@ export interface TableProps<Column, Value = unknown> {
   columnsResizeable?: boolean
   /** Height of cells in pixels. */
   cellHeight?: number
+  /** Component used to render the content of cells for a particular column. */
+  cellContent?: (column: Column) => Component<CellContentProps<Value>> | undefined
+  /** Gets the icon for a particular column. */
+  getColumnIcon?: (column: Column) => Component | undefined
   /** The state of the selected cell or cells in the table. */
   activeRange?: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
@@ -213,9 +218,6 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   const tableWidth = () => horizSizes().tableWidth
   const tableHeight = () => rowVirtualizer.getTotalSize()
 
-  // FIXME
-  const TextContent = textContent()
-
   // Column virtualisation
   const visibleColumnRange = createMemo(
     () => {
@@ -238,10 +240,10 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           return props.getColumnName?.(column) ?? String(column)
         },
         get component() {
-          return TextContent // FIXME
+          return props.cellContent?.(column) ?? DEFAULT_CELL_CONTENT
         },
         get icon() {
-          return undefined // FIXME
+          return props.getColumnIcon?.(column)
         },
         get index() {
           return index()
@@ -682,10 +684,11 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           )}
         </For>
 
+        {/* Rendered separately to avoid issues caused by row/column virtualisation. */}
         <Show when={activeCellData()} keyed>
           {({ row, column }) => (
             <CellInputContainer
-              component={TextContent}
+              component={props.cellContent?.(column) ?? DEFAULT_CELL_CONTENT}
               rect={activeCellOutline()!}
               value={props.getCellValue(row, column)}
               setValue={value => props.setCellValue?.(row, column, value)}

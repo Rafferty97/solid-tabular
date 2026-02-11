@@ -89,7 +89,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
   }
 
   return (
-    <div class="solid-tabular/cell-input">
+    <div class="solid-tabular/text-content-input">
       <input
         ref={inputEl}
         // name="cellinput"
