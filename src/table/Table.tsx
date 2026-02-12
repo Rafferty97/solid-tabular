@@ -346,7 +346,9 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     const { cell } = props.activeRange
     const min = [Math.min(cell[0], i ?? 0), Math.min(cell[1], j ?? 0)] as const
     const max = [Math.max(cell[0], i ?? numRows() - 1), Math.max(cell[1], j ?? numCols() - 1)] as const
-    props.setActiveRange?.({ cell, range: { min, max } })
+    const range = max[0] > min[0] || max[1] > min[1] ? { min, max } : undefined
+    props.setActiveRange?.({ cell, range })
+
     scrollToCell(i, j)
     focus()
   }

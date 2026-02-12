@@ -12,6 +12,5 @@
   align-items: center;
   box-sizing: border-box;
   background: var(--solid-tabular-cell-color);
-  clip-path: inset(1px);
-  padding: 1px;
+  border: 1px solid transparent;
 }

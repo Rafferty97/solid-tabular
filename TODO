@@ -1,4 +1,3 @@
-- Fix cell input alignment
 - Extract out context menu
 - Lift cell component to top level?
 - Column auto-sizing
