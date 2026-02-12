@@ -1,8 +1,8 @@
 import { createMemo, JSXElement, onCleanup, Show } from 'solid-js'
 import { calcCursorPosition } from 'src/lib/calcCursorPosition'
-import { cn } from 'src/lib/classnames'
 import { CellContentProps } from '../table/Cell'
 import { createEvent, Handler } from 'src/lib/createEvent'
+import { cn } from 'src/lib/classnames'
 import './CellContent.css'
 
 export type CellFormat = Partial<{
@@ -17,14 +17,13 @@ export type Alignment = 'left' | 'center' | 'right'
 
 type InputProps = CellContentProps & {
   focus: Handler<{ start: number; end?: number }>
-  onFinishedEditing(): void
 }
 
-export const textContent = (format: CellFormat = {}) => {
+export const createTextContent = (format: CellFormat = {}) => {
   const Input = (props: InputProps) => {
     let inputEl: HTMLInputElement | undefined
-
     let quickMode = true
+
     const value = createMemo(() => (props.value != null ? String(props.value) : ''))
 
     const edit = (start: number, end: number | null, quick: boolean) => {
@@ -108,18 +107,14 @@ export const textContent = (format: CellFormat = {}) => {
         </div>
         {format.suffix?.(props.value)}
         <Show when={props.editing}>
-          <Input {...props} onFinishedEditing={props.onFinishedEditing} focus={onFocus} quickEdit={props.quickEdit} />
+          <Input {...props} focus={onFocus} />
         </Show>
       </div>
     )
   }
 }
 
-export const checkboxContent = () => (props: CellContentProps) => {
-  if (props.editing) {
-    return null
-  }
-
+export const createCheckboxContent = () => (props: CellContentProps) => {
   return (
     <div class="solid-tabular/checkbox-content">
       <label>

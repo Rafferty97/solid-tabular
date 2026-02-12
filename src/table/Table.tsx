@@ -15,13 +15,13 @@ import { AddRowButton } from './AddRowButton'
 import { AddColumnButton } from './AddColumnButton'
 import { RowHeader } from './RowHeader'
 import { isEqual } from 'radashi'
-import { textContent } from 'src/components/CellContent'
+import { createTextContent } from 'src/components/CellContent'
 import { copyTableToClipboard, pasteTableFromClipboard } from 'src/lib/clipboard'
 import './Table.css'
 
 const DEFAULT_COLUMN_SIZE = 80 // px
 const DEFAULT_CELL_HEIGHT = 29 // px
-const DEFAULT_CELL_CONTENT = textContent()
+const DEFAULT_CELL_CONTENT = createTextContent()
 const CELL_DRAG_DELAY = 300 // ms
 
 export interface TableProps<Column, Value = unknown> {
