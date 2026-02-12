@@ -92,7 +92,7 @@ export const textContentInput = (format: CellFormat) => (props: CellContentProps
     <div class="solid-tabular/text-content-input">
       <input
         ref={inputEl}
-        // name="cellinput"
+        name="cellinput" // not needed, but suppresses warnings in Chrome
         style={{ 'text-align': format.align }}
         value={value()}
         onChange={ev => props.setValue(ev.currentTarget.value)}

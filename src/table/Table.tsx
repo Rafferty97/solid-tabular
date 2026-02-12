@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createSignal, mapArray, createEffect, Component } from 'solid-js'
+import { For, Show, createMemo, createSignal, mapArray, createEffect, Component, onCleanup } from 'solid-js'
 import { createVirtualizer } from '@tanstack/solid-virtual'
 import type { DragMode, ActiveRange, CellIndex } from './types'
 import { devicePixelRatio, createSize } from 'src/lib/devicePixelRatio'
@@ -19,9 +19,10 @@ import { textContent } from 'src/components/CellContent'
 import { copyTableToClipboard, pasteTableFromClipboard } from 'src/lib/clipboard'
 import './Table.css'
 
-const DEFAULT_COLUMN_SIZE = 80
-const DEFAULT_CELL_HEIGHT = 29
+const DEFAULT_COLUMN_SIZE = 80 // px
+const DEFAULT_CELL_HEIGHT = 29 // px
 const DEFAULT_CELL_CONTENT = textContent()
+const CELL_DRAG_DELAY = 300 // ms
 
 export interface TableProps<Column, Value = unknown> {
   /** The columns. */
@@ -114,8 +115,8 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       Math.max(Math.min(range?.max[1] ?? cell[1], maxCol), 0),
     ] as const
     const shiftCell = [
-      cell[0] === max[0] ? min[0] : max[0],
-      cell[1] === max[1] ? min[1] : max[1],
+      cell[0] === max[0] ? min[0] : max[0], // Last row, unless `cell` is already there
+      cell[1] === max[1] ? min[1] : max[1], // Last column, unless `cell` is already there
     ] as const
     const size = [1 + max[0] - min[0], 1 + max[1] - min[1]] as const
     return { cell, shiftCell, min, max, size }
@@ -163,10 +164,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       return scrollPadding()
     },
     onChange(instance) {
-      const nextRange: [number, number] = [
-        instance.range?.startIndex ?? 0,
-        instance.range?.endIndex ?? 0,
-      ]
+      const nextRange: [number, number] = [instance.range?.startIndex ?? 0, instance.range?.endIndex ?? 0]
       if (viewportRange[0] !== nextRange[0] || viewportRange[1] !== nextRange[1]) {
         viewportRange = nextRange
         props.onViewportChanged?.(viewportRange[0], viewportRange[1])
@@ -348,10 +346,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
 
     const { cell } = props.activeRange
     const min = [Math.min(cell[0], i ?? 0), Math.min(cell[1], j ?? 0)] as const
-    const max = [
-      Math.max(cell[0], i ?? numRows() - 1),
-      Math.max(cell[1], j ?? numCols() - 1),
-    ] as const
+    const max = [Math.max(cell[0], i ?? numRows() - 1), Math.max(cell[1], j ?? numCols() - 1)] as const
     props.setActiveRange?.({ cell, range: { min, max } })
     scrollToCell(i, j)
     focus()
@@ -383,6 +378,9 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   // Handle cell and cell range selection by mouse
   const [cellDragging, setCellDragging] = createSignal<DragMode>()
 
+  let pointerCapture: ReturnType<typeof setTimeout> | undefined
+  onCleanup(() => clearTimeout(pointerCapture))
+
   const onCellDown = (ev: PointerEvent, i: number | null, j: number | null) => {
     if (ev.shiftKey) {
       rangeToCell(i ?? undefined, j ?? undefined)
@@ -390,7 +388,8 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       moveToCell(i ?? undefined, j ?? undefined)
     }
     setCellDragging(i == null ? 'rows' : j == null ? 'cols' : 'cell')
-    tableEl?.setPointerCapture(ev.pointerId)
+    clearTimeout(pointerCapture)
+    pointerCapture = setTimeout(() => tableEl?.setPointerCapture(ev.pointerId), CELL_DRAG_DELAY)
   }
 
   let [x, y] = [0, 0]
@@ -407,7 +406,10 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     rangeToCell(cellDragging() == 'rows' ? undefined : i, cellDragging() == 'cols' ? undefined : j)
   }
 
-  const onCellUp = () => setCellDragging(undefined)
+  const onCellUp = () => {
+    setCellDragging(undefined)
+    clearTimeout(pointerCapture)
+  }
 
   const onCellContextDown = (_ev: MouseEvent, i: number, j: number) => {
     moveToCellIfOutside(i, j)
@@ -637,11 +639,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           />
         </Show>
 
-        <Outline
-          rect={activeRangeOutline()}
-          headerTop={colHeaderHeight()}
-          expand={cellIntersectsTop()}
-        />
+        <Outline rect={activeRangeOutline()} headerTop={colHeaderHeight()} expand={cellIntersectsTop()} />
       </div>
 
       {/* Row headers */}
@@ -658,11 +656,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           )}
         </For>
 
-        <Outline
-          rect={activeRangeOutline()}
-          headerLeft={rowHeaderWidth()}
-          expand={cellIntersectsLeft()}
-        />
+        <Outline rect={activeRangeOutline()} headerLeft={rowHeaderWidth()} expand={cellIntersectsLeft()} />
       </div>
 
       {/* Cells */}
