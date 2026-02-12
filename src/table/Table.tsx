@@ -45,8 +45,6 @@ export interface TableProps<Column, Value = unknown> {
   activeRange?: ActiveRange
   /** Sets the state of the selected cell or cells in the table. */
   setActiveRange?: (range: ActiveRange) => void
-  /** Gets whether a given cell is editable. */
-  getCellEditable?: (row: number, column: Column) => boolean
   /** Gets the value in a cell. */
   getCellValue(row: number, column: Column): Value
   /** Sets the value of the given cell. */
@@ -92,8 +90,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   // The element that proxies cell focus
   let focusEl: HTMLDivElement | undefined
 
-  // Cell input events
-  const [onFocus, emitFocus] = createEvent<{ start: number; end?: number }>()
+  // Quick edit event
   const [onQuickEdit, emitQuickEdit] = createEvent<void>()
 
   // Row and column counts
@@ -123,7 +120,9 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   })
 
   // The active cell, which may be within a range
-  const activeCell = () => activeRange()?.cell
+  const activeCell = createMemo(() => activeRange()?.cell, undefined, {
+    equals: (a, b) => String(a) === String(b),
+  })
 
   // Details about the active cell
   const activeCellData = createMemo(() => {
@@ -419,28 +418,6 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     moveToCellIfOutside(i, j)
   }
 
-  // Start editing a cell, with an optional cursor position
-  const editCell = (pos: number) => {
-    const cell = activeCellData()
-    if (!cell) return
-
-    if (pos && props.getCellEditable?.(cell.row, cell.column)) {
-      emitFocus({ start: pos, end: pos })
-    } else {
-      emitFocus({ start: 0 })
-    }
-  }
-
-  // Start editing a cell in "quick mode"
-  const quickEditCell = (ev: KeyboardEvent) => {
-    const cell = activeCellData()
-    if (cell && props.getCellEditable?.(cell.row, cell.column)) {
-      emitQuickEdit()
-    } else {
-      ev.preventDefault()
-    }
-  }
-
   // Handle cell copy and paste events
   const handleCopy = async (ev?: ClipboardEvent) => {
     ev?.preventDefault()
@@ -528,7 +505,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     }
 
     if (isPrintableKey(ev) || ev.key === 'Backspace') {
-      quickEditCell(ev)
+      emitQuickEdit()
       return
     }
 
@@ -673,7 +650,6 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
               onPointerDown={onCellDown}
               onMouseContextDown={onCellContextDown}
               onContextMenu={onContextMenu}
-              onEditCell={editCell}
             />
           )}
         </For>
@@ -686,9 +662,8 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
               rect={activeCellOutline()!}
               value={props.getCellValue(row, column)}
               setValue={value => props.setCellValue?.(row, column, value)}
-              onFinishedEditing={focus}
-              focus={onFocus}
               quickEdit={onQuickEdit}
+              onFinishedEditing={focus}
             />
           )}
         </Show>

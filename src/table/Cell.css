@@ -8,7 +8,10 @@
 
 .solid-tabular\/cell-input-container {
   position: absolute;
-  border: 1px solid transparent;
-  pointer-events: none;
+  display: flex;
+  align-items: center;
   box-sizing: border-box;
+  background: var(--solid-tabular-cell-color);
+  clip-path: inset(1px);
+  padding: 1px;
 }

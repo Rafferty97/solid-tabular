@@ -1,7 +1,8 @@
-import { createMemo, JSXElement, onCleanup } from 'solid-js'
+import { createMemo, JSXElement, onCleanup, Show } from 'solid-js'
 import { calcCursorPosition } from 'src/lib/calcCursorPosition'
 import { cn } from 'src/lib/classnames'
 import { CellContentProps } from '../table/Cell'
+import { createEvent, Handler } from 'src/lib/createEvent'
 import './CellContent.css'
 
 export type CellFormat = Partial<{
@@ -14,18 +15,80 @@ export type CellFormat = Partial<{
 
 export type Alignment = 'left' | 'center' | 'right'
 
-export const textContent =
-  (format: CellFormat = {}) =>
-  (props: CellContentProps) => {
-    if (props.editing) {
-      return textContentInput(format)(props)
+type InputProps = CellContentProps & {
+  focus: Handler<{ start: number; end?: number }>
+  onFinishedEditing(): void
+}
+
+export const textContent = (format: CellFormat = {}) => {
+  const Input = (props: InputProps) => {
+    let inputEl: HTMLInputElement | undefined
+
+    let quickMode = true
+    const value = createMemo(() => (props.value != null ? String(props.value) : ''))
+
+    const edit = (start: number, end: number | null, quick: boolean) => {
+      if (!inputEl) return
+      quickMode = quick
+      inputEl.scrollLeft = 0
+      inputEl.setSelectionRange(start, end ?? inputEl.value.length)
+      inputEl.focus({ preventScroll: true })
+    }
+    props.focus(({ start, end }) => edit(start, end ?? null, false))
+    props.quickEdit(() => edit(0, null, true))
+
+    onCleanup(() => inputEl === document.activeElement && props.setValue(inputEl.value))
+
+    const handleInputKeyDown = (ev: KeyboardEvent) => {
+      if (!inputEl) return
+
+      // Let these bubble up to the Table
+      if (ev.key === 'Tab' || ev.key === 'Enter') {
+        return
+      }
+      if (quickMode && ev.key.startsWith('Arrow')) {
+        return
+      }
+
+      if (ev.key === 'Escape') {
+        ev.preventDefault()
+        inputEl.value = value()
+        props.onFinishedEditing()
+        return
+      }
+
+      // Handle all other keys natively
+      ev.stopPropagation()
     }
 
+    return (
+      <div class="solid-tabular/text-content-input">
+        <input
+          ref={inputEl}
+          name="cellinput" // not needed, but suppresses warnings in Chrome
+          style={{ 'text-align': format.align }}
+          value={value()}
+          onChange={ev => props.setValue(ev.currentTarget.value)}
+          onKeyDown={handleInputKeyDown}
+          onClick={() => (quickMode = false)}
+          onDblClick={ev => ev.stopPropagation()}
+          onPaste={ev => ev.stopPropagation()}
+          tabIndex={-1}
+        />
+      </div>
+    )
+  }
+
+  return (props: CellContentProps) => {
     let contentEl: HTMLDivElement | undefined
 
+    const [onFocus, emitFocus] = createEvent<{ start: number; end?: number }>()
+
     const handleDoubleClick = (ev: MouseEvent) => {
+      // FIXME: check if editable?
       ev.stopPropagation()
-      props.onEdit(contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0)
+      const pos = contentEl ? calcCursorPosition(contentEl, ev.pageX) : 0
+      emitFocus({ start: pos, end: pos })
     }
 
     return (
@@ -44,67 +107,12 @@ export const textContent =
           <span ref={contentEl}>{format.content?.(props.value) ?? String(props.value)}</span>
         </div>
         {format.suffix?.(props.value)}
+        <Show when={props.editing}>
+          <Input {...props} onFinishedEditing={props.onFinishedEditing} focus={onFocus} quickEdit={props.quickEdit} />
+        </Show>
       </div>
     )
   }
-
-export const textContentInput = (format: CellFormat) => (props: CellContentProps) => {
-  let inputEl: HTMLInputElement | undefined
-
-  let quickMode = true
-  const value = createMemo(() => (props.value != null ? String(props.value) : ''))
-
-  const edit = (start: number, end: number | null, quick: boolean) => {
-    if (!inputEl) return
-    quickMode = quick
-    inputEl.scrollLeft = 0
-    inputEl.setSelectionRange(start, end ?? inputEl.value.length)
-    inputEl.focus({ preventScroll: true })
-  }
-  props.focus(({ start, end }) => edit(start, end ?? null, false))
-  props.quickEdit(() => edit(0, null, true))
-
-  onCleanup(() => inputEl === document.activeElement && props.setValue(inputEl.value))
-
-  const handleInputKeyDown = (ev: KeyboardEvent) => {
-    if (!inputEl) return
-
-    // Let these bubble up to the Table
-    if (ev.key === 'Tab' || ev.key === 'Enter') {
-      return
-    }
-    if (quickMode && ev.key.startsWith('Arrow')) {
-      return
-    }
-
-    if (ev.key === 'Escape') {
-      ev.preventDefault()
-      inputEl.value = value()
-      props.onFinishedEditing()
-      return
-    }
-
-    // Handle all other keys natively
-    ev.stopPropagation()
-  }
-
-  return (
-    <div class="solid-tabular/text-content-input">
-      <input
-        ref={inputEl}
-        name="cellinput" // not needed, but suppresses warnings in Chrome
-        style={{ 'text-align': format.align }}
-        value={value()}
-        onChange={ev => props.setValue(ev.currentTarget.value)}
-        onKeyDown={handleInputKeyDown}
-        // readOnly={props.readonly}
-        onClick={() => (quickMode = false)}
-        onDblClick={ev => ev.stopPropagation()}
-        onPaste={ev => ev.stopPropagation()}
-        tabIndex={-1}
-      />
-    </div>
-  )
 }
 
 export const checkboxContent = () => (props: CellContentProps) => {
@@ -130,12 +138,7 @@ export const checkboxContent = () => (props: CellContentProps) => {
           )}
         >
           {!!props.value && (
-            <svg
-              class="solid-tabular/checkbox-icon"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg class="solid-tabular/checkbox-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M13.5 4.5l-7 7-4-4"
                 stroke="currentColor"

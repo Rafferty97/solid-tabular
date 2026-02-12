@@ -13,7 +13,6 @@ export interface TableRowProps<Column, Value> {
   onPointerDown: (ev: PointerEvent, i: number, j: number) => void
   onMouseContextDown?: (ev: MouseEvent, i: number, j: number) => void
   onContextMenu?: (ev: MouseEvent, i: number, j: number) => void
-  onEditCell(pos: number): void
 }
 
 export function TableRow<Column, Value>(props: TableRowProps<Column, Value>) {
@@ -38,7 +37,6 @@ export function TableRow<Column, Value>(props: TableRowProps<Column, Value>) {
               component={col.component}
               value={props.getCellValue(props.row, col.column)}
               setValue={value => props.setCellValue?.(props.row, col.column, value)}
-              onEdit={props.onEditCell}
             />
           </div>
         )}

@@ -23,6 +23,7 @@
 
 .solid-tabular\/text-content-input {
   overflow: hidden;
+  width: 0;
   height: 0;
   pointer-events: auto;
 

@@ -50,7 +50,6 @@ const meta = {
           setColumnSize={(col, size) => setWidths(w => new Map([...w, [col, size]]))}
           resetColumnSize={col => setWidths(w => new Map([...w].filter(e => e[0] !== col)))}
           columnsResizeable
-          getCellEditable={() => true}
         />
       </div>
     )

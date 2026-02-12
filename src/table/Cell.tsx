@@ -8,7 +8,6 @@ export interface CellProps<T> {
   component: Component<CellContentProps<T>>
   value: T
   setValue(value: T): void
-  onEdit(pos: number): void
 }
 
 export interface CellInputProps<T> {
@@ -17,7 +16,6 @@ export interface CellInputProps<T> {
   value: T
   setValue(value: T): void
   onFinishedEditing(): void
-  focus: Handler<{ start: number; end?: number }>
   quickEdit: Handler<void>
 }
 
@@ -28,10 +26,10 @@ export type CellContentProps<T = unknown> = {
   editing: boolean
   /** Updates the value of the cell. */
   setValue(value: T): void
-  onEdit(pos: number): void
-  onFinishedEditing(): void
-  focus: Handler<{ start: number; end?: number }>
+  /** Fired when a quick edit has been triggered by a keyboard event. */
   quickEdit: Handler<void>
+  /** Returns focus to the table. */
+  onFinishedEditing(): void
 }
 
 export function Cell<T>(props: CellProps<T>) {
@@ -48,10 +46,8 @@ export function Cell<T>(props: CellProps<T>) {
         value={value()}
         editing={false}
         setValue={props.setValue}
-        onEdit={props.onEdit}
-        onFinishedEditing={() => {}}
-        focus={nullHandler()}
         quickEdit={nullHandler()}
+        onFinishedEditing={() => {}}
       />
     </div>
   )
@@ -73,10 +69,8 @@ export function CellInputContainer<T>(props: CellInputProps<T>) {
         value={props.value}
         editing={true}
         setValue={value => props.setValue(value)}
-        onEdit={() => {}}
-        onFinishedEditing={props.onFinishedEditing}
-        focus={props.focus}
         quickEdit={props.quickEdit}
+        onFinishedEditing={props.onFinishedEditing}
       />
     </div>
   )
