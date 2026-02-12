@@ -381,9 +381,10 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
 
   // Selects all cells in a row, column or the whole table
   const selectAll = () => {
+    const cell = props.activeRange?.cell ?? ([0, 0] as const)
     const min = [0, 0] as const
     const max = [numRows() - 1, numCols() - 1] as const
-    props.setActiveRange?.({ cell: min, range: { min, max } })
+    props.setActiveRange?.({ cell, range: { min, max } })
   }
 
   // Handle cell and cell range selection by mouse
