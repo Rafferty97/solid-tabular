@@ -16,7 +16,8 @@ export interface CellInputProps<T> {
   value: T
   setValue(value: T): void
   onFinishedEditing(): void
-  quickEdit: Handler<void>
+  quickEdit: Handler<KeyboardEvent>
+  onPointerDown?: (ev: PointerEvent) => void
 }
 
 export type CellContentProps<T = unknown> = {
@@ -27,7 +28,7 @@ export type CellContentProps<T = unknown> = {
   /** Updates the value of the cell. */
   setValue(value: T): void
   /** Fired when a quick edit has been triggered by a keyboard event. */
-  quickEdit: Handler<void>
+  quickEdit: Handler<KeyboardEvent>
   /** Returns focus to the table. */
   onFinishedEditing(): void
 }
@@ -63,6 +64,7 @@ export function CellInputContainer<T>(props: CellInputProps<T>) {
         width: `${props.rect.width}px`,
         height: `${props.rect.height}px`,
       }}
+      onPointerDown={props.onPointerDown}
     >
       <Dynamic
         component={props.component}

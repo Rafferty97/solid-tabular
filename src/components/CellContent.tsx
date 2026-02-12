@@ -69,6 +69,7 @@ export const createTextContent = (format: CellFormat = {}) => {
           value={value()}
           onChange={ev => props.setValue(ev.currentTarget.value)}
           onKeyDown={handleInputKeyDown}
+          onPointerDown={ev => ev.stopPropagation()}
           onClick={() => (quickMode = false)}
           onDblClick={ev => ev.stopPropagation()}
           onPaste={ev => ev.stopPropagation()}
@@ -115,10 +116,20 @@ export const createTextContent = (format: CellFormat = {}) => {
 }
 
 export const createCheckboxContent = () => (props: CellContentProps) => {
+  let inputEl: HTMLInputElement | undefined
+
+  props.quickEdit(ev => {
+    if (ev.code === 'Space' && !ev.repeat) {
+      ev.preventDefault()
+      props.setValue(!props.value)
+    }
+  })
+
   return (
     <div class="solid-tabular/checkbox-content">
-      <label>
+      <label onPointerDown={ev => ev.stopPropagation()}>
         <input
+          ref={inputEl}
           type="checkbox"
           class="solid-tabular/sr-only"
           checked={!!props.value}

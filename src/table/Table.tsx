@@ -91,7 +91,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   let focusEl: HTMLDivElement | undefined
 
   // Quick edit event
-  const [onQuickEdit, emitQuickEdit] = createEvent<void>()
+  const [onQuickEdit, emitQuickEdit] = createEvent<KeyboardEvent>()
 
   // Row and column counts
   const numRows = () => props.numRows
@@ -303,17 +303,44 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   // Focuses the input proxy element
   const focus = () => focusEl?.focus({ preventScroll: true })
 
-  // Moves focus to the given cell
-  const moveToCell = (i?: number, j?: number) => {
-    if (i != null) i = Math.max(Math.min(i, numRows() - 1), 0)
-    if (j != null) j = Math.max(Math.min(j, numCols() - 1), 0)
+  const calcRange = (from: CellIndex, to: CellIndex, mode: DragMode) => {
+    const min = [
+      mode === 'cols' ? 0 : Math.min(from[0], to[0]),
+      mode === 'rows' ? 0 : Math.min(from[1], to[1]),
+    ] as const
+    const max = [
+      mode === 'cols' ? numRows() - 1 : Math.max(from[0], to[0]),
+      mode === 'rows' ? numCols() - 1 : Math.max(from[1], to[1]),
+    ] as const
+    const isRange = max[0] > min[0] || max[1] > min[1]
+    return isRange ? { min, max } : undefined
+  }
 
-    const min = [i ?? 0, j ?? 0] as const
-    const max = [i ?? numRows() - 1, j ?? numCols() - 1] as const
-    const cell = min
-    const range = i == null || j == null ? { min, max } : undefined
+  // Moves focus to the given cell
+  const moveToCell = (i: number, j: number, mode: DragMode = 'cell') => {
+    i = Math.max(Math.min(i, numRows() - 1), 0)
+    j = Math.max(Math.min(j, numCols() - 1), 0)
+
+    const cell = [i, j] as const
+    const range = calcRange(cell, cell, mode)
 
     props.setActiveRange?.({ cell, range })
+
+    scrollToCell(i, j)
+    focus()
+  }
+
+  // Moves the cell range to the given cell
+  const rangeToCell = (i: number, j: number, mode: DragMode = 'cell') => {
+    i = Math.max(Math.min(i, numRows() - 1), 0)
+    j = Math.max(Math.min(j, numCols() - 1), 0)
+
+    const newCell = [i, j] as const
+    const cell = props.activeRange?.cell ?? newCell
+    const range = calcRange(cell, newCell, mode)
+
+    props.setActiveRange?.({ cell, range })
+
     scrollToCell(i, j)
     focus()
   }
@@ -330,26 +357,9 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       ai < min[0] ? max[0] : ai > max[0] ? min[0] : ai,
       aj < min[1] ? max[1] : aj > max[1] ? min[1] : aj,
     ] as const
-
     props.setActiveRange?.({ cell, range })
+
     scrollToCell(cell[0], cell[1])
-    focus()
-  }
-
-  // Moves the cell range to the given cell
-  const rangeToCell = (i?: number, j?: number) => {
-    if (!props.activeRange) return
-
-    if (i != null) i = Math.max(Math.min(i, numRows() - 1), 0)
-    if (j != null) j = Math.max(Math.min(j, numCols() - 1), 0)
-
-    const { cell } = props.activeRange
-    const min = [Math.min(cell[0], i ?? 0), Math.min(cell[1], j ?? 0)] as const
-    const max = [Math.max(cell[0], i ?? numRows() - 1), Math.max(cell[1], j ?? numCols() - 1)] as const
-    const range = max[0] > min[0] || max[1] > min[1] ? { min, max } : undefined
-    props.setActiveRange?.({ cell, range })
-
-    scrollToCell(i, j)
     focus()
   }
 
@@ -370,9 +380,9 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   }
 
   // Selects all cells in a row, column or the whole table
-  const selectAll = (i: number | null, j: number | null) => {
-    const min = [i ?? 0, j ?? 0] as const
-    const max = [i ?? numRows() - 1, j ?? numCols() - 1] as const
+  const selectAll = () => {
+    const min = [0, 0] as const
+    const max = [numRows() - 1, numCols() - 1] as const
     props.setActiveRange?.({ cell: min, range: { min, max } })
   }
 
@@ -382,29 +392,31 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
   let pointerCapture: ReturnType<typeof setTimeout> | undefined
   onCleanup(() => clearTimeout(pointerCapture))
 
-  const onCellDown = (ev: PointerEvent, i: number | null, j: number | null) => {
+  const computeCellIndex = (ev: PointerEvent) => {
+    const rect = tableEl!.getBoundingClientRect()
+    const x = ev.pageX + viewport().left - rect.left
+    const y = ev.pageY + viewport().top - rect.top
+    const i = Math.floor((y - colHeaderHeight()) / cellHeight())
+    const j = findIndex(horizSizes().columns, c => c.right > x)
+    return [i, j] as const
+  }
+
+  const onCellDown = (ev: PointerEvent, mode: DragMode = 'cell') => {
+    const [i, j] = computeCellIndex(ev)
     if (ev.shiftKey) {
-      rangeToCell(i ?? undefined, j ?? undefined)
+      rangeToCell(i, j, mode)
     } else {
-      moveToCell(i ?? undefined, j ?? undefined)
+      moveToCell(i, j, mode)
     }
-    setCellDragging(i == null ? 'rows' : j == null ? 'cols' : 'cell')
+    setCellDragging(mode)
     clearTimeout(pointerCapture)
     pointerCapture = setTimeout(() => tableEl?.setPointerCapture(ev.pointerId), CELL_DRAG_DELAY)
   }
 
-  let [x, y] = [0, 0]
-
-  const onCellMove = (ev?: MouseEvent) => {
+  const onCellMove = (ev: PointerEvent) => {
     if (!cellDragging()) return
-    if (ev) {
-      const rect = tableEl!.getBoundingClientRect()
-      x = ev.pageX + viewport().left - rect.left
-      y = ev.pageY + viewport().top - rect.top
-    }
-    const i = Math.floor((y - colHeaderHeight()) / cellHeight())
-    const j = findIndex(horizSizes().columns, c => c.right > x)
-    rangeToCell(cellDragging() == 'rows' ? undefined : i, cellDragging() == 'cols' ? undefined : j)
+    const [i, j] = computeCellIndex(ev)
+    rangeToCell(i, j, cellDragging())
   }
 
   const onCellUp = () => {
@@ -507,7 +519,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
     }
 
     if (isPrintableKey(ev) || ev.key === 'Backspace') {
-      emitQuickEdit()
+      emitQuickEdit(ev)
       return
     }
 
@@ -518,7 +530,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
 
     if (ev.key === 'a' && ev[modifierKey] && !ev.shiftKey) {
       ev.preventDefault()
-      selectAll(null, null)
+      selectAll()
       return
     }
   }
@@ -582,7 +594,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       <div class="solid-tabular/corner-box">
         <div
           style={{ width: `${rowHeaderWidth()}px`, height: `${colHeaderHeight()}px` }}
-          onPointerDown={() => selectAll(null, null)}
+          onPointerDown={() => selectAll()}
         />
         <Outline
           rect={cellIntersectsLeft() && cellIntersectsTop() ? activeRangeOutline() : undefined}
@@ -604,7 +616,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
               setColumnName={props.setColumnName}
               setColumnSize={props.setColumnSize}
               resetColumnSize={props.resetColumnSize}
-              onPointerDown={ev => onCellDown(ev, null, column.index)}
+              onPointerDown={ev => onCellDown(ev, 'cols')}
             />
           )}
         </For>
@@ -630,7 +642,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
               width={rowHeaderWidth()}
               height={cellHeight()}
               y={item.start}
-              onPointerDown={ev => onCellDown(ev, item.index, null)}
+              onPointerDown={ev => onCellDown(ev, 'rows')}
             />
           )}
         </For>
@@ -639,7 +651,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       </div>
 
       {/* Cells */}
-      <div style={{ width: `${tableWidth() + 6}px`, height: `${tableHeight() + 6}px` }}>
+      <div style={{ width: `${tableWidth() + 6}px`, height: `${tableHeight() + 6}px` }} onPointerDown={onCellDown}>
         <For each={rowVirtualizer.getVirtualItems()}>
           {item => (
             <TableRow
@@ -649,7 +661,6 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
               height={item.size}
               getCellValue={props.getCellValue}
               setCellValue={props.setCellValue}
-              onPointerDown={onCellDown}
               onMouseContextDown={onCellContextDown}
               onContextMenu={onContextMenu}
             />

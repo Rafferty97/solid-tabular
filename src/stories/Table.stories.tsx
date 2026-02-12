@@ -1,8 +1,10 @@
 import { createMemo, createSignal, onMount } from 'solid-js'
+import type { Component } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { fn } from 'storybook/test'
-import { ActiveRange, Table } from 'src'
 import Papa from 'papaparse'
+import { ActiveRange, createCheckboxContent, Table } from 'src'
+import { CellContentProps } from 'src/table/Cell'
 
 const meta = {
   args: {
@@ -29,6 +31,10 @@ const meta = {
     })
 
     const data = createMemo(() => fetchedData() ?? props.data ?? [])
+    const columns = createMemo(() => Object.keys(data()[0] ?? {}), undefined, {
+      equals: (a, b) => String(a) === String(b),
+    })
+    const numRows = createMemo(() => data().length)
 
     return (
       <div
@@ -40,10 +46,16 @@ const meta = {
         }}
       >
         <Table
-          columns={Object.keys(data()[0] ?? {})}
-          numRows={data().length}
+          columns={columns()}
+          numRows={numRows()}
+          cellContent={props.cellContent}
           getCellValue={(row, col) => data()[row]![col]!}
-          setCellValue={props.setCellValue}
+          setCellValue={(row, col, value) => {
+            const newData = data().slice()
+            newData[row] = { ...newData[row], [col]: value }
+            setFetchedData(newData)
+            props.setCellValue(row, col, value)
+          }}
           activeRange={activeRange()}
           setActiveRange={setActiveRange}
           getColumnSize={col => widths().get(col)}
@@ -59,6 +71,7 @@ const meta = {
   url?: string
   accentColor: string
   setCellValue: (row: number, column: string, value: unknown) => void
+  cellContent?: (column: string) => Component<CellContentProps>
 }>
 
 export default meta
@@ -77,5 +90,19 @@ export const BasicUsage = {
 export const MediumSizedTable = {
   args: {
     url: new URL('/src/stories/stats.csv', import.meta.url),
+  },
+} satisfies Story
+
+const CheckboxContent = createCheckboxContent()
+
+export const CustomCellContent = {
+  args: {
+    data: [
+      { A: 1, B: 2, C: false },
+      { A: 4, B: 5, C: true },
+      { A: 2, B: 8, C: true },
+      { A: 3, B: 9, C: false },
+    ],
+    cellContent: (col: string) => (col === 'C' ? CheckboxContent : undefined),
   },
 } satisfies Story

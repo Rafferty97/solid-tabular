@@ -13,4 +13,6 @@
   box-sizing: border-box;
   background: var(--solid-tabular-cell-color);
   border: 1px solid transparent;
+  clip-path: inset(1px);
+  cursor: cell;
 }
