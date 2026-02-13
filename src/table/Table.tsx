@@ -29,16 +29,18 @@ export interface TableProps<Column, Value = unknown> {
   columns: Column[]
   /** The number of rows. */
   numRows: number
-  /** Whether columns can be inserted, removed, modified and re-ordered. */
-  columnsEditable?: boolean
-  /** Whether rows can be inserted, removed and re-ordered. */
-  rowsEditable?: boolean
   /** Whether columns can be resized. */
   columnsResizeable?: boolean
+  /** Whether columns can be renamed. */
+  columnsRenameable?: boolean
+  /** Whether to render an "add column" button. */
+  addColumnButton?: boolean
+  /** Whether to render an "add column" button. */
+  addRowButton?: boolean
   /** Height of cells in pixels. */
   cellHeight?: number
   /** Component used to render the content of cells for a particular column. */
-  cellContent?: (column: Column) => Component<CellContentProps<Value>> | undefined
+  getCellContent?: (column: Column) => Component<CellContentProps<Value>> | undefined
   /** Gets the icon for a particular column. */
   getColumnIcon?: (column: Column) => Component | undefined
   /** The state of the selected cell or cells in the table. */
@@ -60,13 +62,9 @@ export interface TableProps<Column, Value = unknown> {
   /** Sets the name of the given column. */
   setColumnName?: (column: Column, name: string) => void
   /** Inserts a numer of columns into the table. */
-  insertColumns?: (index: number, count: number) => void
+  onInsertColumns?: (index: number, count: number) => void
   /** Inserts a number of rows into the table. */
-  insertRows?: (index: number, count: number) => void
-  /** Removes a number of columns from the table. */
-  removeColumns?: (index: number, count: number) => void
-  /** Removes a number of rows from the table. */
-  removeRows?: (index: number, count: number) => void
+  onInsertRows?: (index: number, count: number) => void
   /** Called whenever the range of rows visible in the viewport changes. */
   onViewportChanged?: (start: number, end: number) => void
   /** Fired when a cell context menu is opened. */
@@ -83,7 +81,7 @@ export interface TableProps<Column, Value = unknown> {
   onScrollPositionChange?: (scrollLeft: number, scrollTop: number) => void
 }
 
-export default function Table<Column, Value = unknown>(props: TableProps<Column, Value>) {
+export function Table<Column, Value = unknown>(props: TableProps<Column, Value>) {
   // The root DOM element of the table
   let tableEl: HTMLDivElement | undefined
 
@@ -237,7 +235,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           return props.getColumnName?.(column) ?? String(column)
         },
         get component() {
-          return props.cellContent?.(column) ?? DEFAULT_CELL_CONTENT
+          return props.getCellContent?.(column) ?? DEFAULT_CELL_CONTENT
         },
         get icon() {
           return props.getColumnIcon?.(column)
@@ -538,8 +536,8 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
 
   // Append row button
   const appendRow = () => {
-    if (!props.insertRows) return
-    props.insertRows(numRows(), 1)
+    if (!props.onInsertRows) return
+    props.onInsertRows(numRows(), 1)
 
     // Scroll to the last row
     scrollToCell(props.numRows, undefined)
@@ -612,7 +610,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
             <ColumnHeader
               column={column}
               height={colHeaderHeight()}
-              columnsEditable={props.columnsEditable}
+              columnsRenameable={props.columnsRenameable}
               columnsResizeable={props.columnsResizeable}
               setColumnName={props.setColumnName}
               setColumnSize={props.setColumnSize}
@@ -622,12 +620,12 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
           )}
         </For>
 
-        <Show when={props.columnsEditable}>
+        <Show when={props.addColumnButton}>
           <AddColumnButton
             tableWidth={tableWidth()}
             width={DEFAULT_COLUMN_SIZE}
             height={colHeaderHeight()}
-            onPointerDown={() => props.insertColumns?.(numCols(), 1)}
+            onPointerDown={() => props.onInsertColumns?.(numCols(), 1)}
           />
         </Show>
 
@@ -672,7 +670,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
         <Show when={activeCellData()} keyed>
           {({ row, column }) => (
             <CellInputContainer
-              component={props.cellContent?.(column) ?? DEFAULT_CELL_CONTENT}
+              component={props.getCellContent?.(column) ?? DEFAULT_CELL_CONTENT}
               rect={activeCellOutline()!}
               value={props.getCellValue(row, column)}
               setValue={value => props.setCellValue?.(row, column, value)}
@@ -686,7 +684,7 @@ export default function Table<Column, Value = unknown>(props: TableProps<Column,
       </div>
 
       {/* Add row button */}
-      <Show when={props.rowsEditable}>
+      <Show when={props.addRowButton}>
         <AddRowButton
           tableWidth={tableWidth()}
           cellHeight={cellHeight()}

@@ -48,7 +48,7 @@ const meta = {
         <Table
           columns={columns()}
           numRows={numRows()}
-          cellContent={props.cellContent}
+          getCellContent={props.getCellContent}
           getCellValue={(row, col) => data()[row]![col]!}
           setCellValue={(row, col, value) => {
             const newData = data().slice()
@@ -71,7 +71,7 @@ const meta = {
   url?: string
   accentColor: string
   setCellValue: (row: number, column: string, value: unknown) => void
-  cellContent?: (column: string) => Component<CellContentProps>
+  getCellContent?: (column: string) => Component<CellContentProps>
 }>
 
 export default meta

@@ -8,7 +8,7 @@ import './ColumnHeader.css'
 export interface ColumnHeaderProps<Column, Value> {
   column: PositionedColumn<Column, Value>
   height: number
-  columnsEditable?: boolean
+  columnsRenameable?: boolean
   columnsResizeable?: boolean
   setColumnName?: (column: Column, name: string) => void
   setColumnSize?: (column: Column, width: number) => void
@@ -33,7 +33,7 @@ export function ColumnHeader<K, T>(props: ColumnHeaderProps<K, T>) {
             class="solid-tabular/renameable"
             value={props.column.name}
             setValue={name => props.setColumnName?.(props.column.column, name)}
-            disabled={!props.columnsEditable}
+            disabled={!props.columnsRenameable}
           />
           <div style={{ flex: '1' }} />
           <Dynamic component={props.column.icon} />

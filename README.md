@@ -85,20 +85,19 @@ The `Table` component is the main entry point, and has two generic type paramete
 | `activeRange` | `ActiveRange` | The current selection state. |
 | `setActiveRange` | `(range: ActiveRange) => void` | Callback to update the selection state. |
 | `columnsResizeable` | `boolean` | Enables column resizing. |
-| `columnsEditable` | `boolean` | Enables column operations (insert/delete/rename). |
-| `rowsEditable` | `boolean` | Enables row operations (insert/delete). |
+| `columnsRenameable` | `boolean` | Enables column renaming. |
+| `addColumnButton` | `boolean` | Whether to render an "add column" button. |
+| `addRowButton` | `boolean` | Whether to render an "add row" button. |
 | `cellHeight` | `number` | Height of cells in pixels (default: 29). |
-| `cellContent` | `(column: Column) => Component<CellContentProps<Value>>` | Component used to render the content of cells for a particular column. |
+| `getCellContent` | `(column: Column) => Component<CellContentProps<Value>>` | Component used to render the content of cells for a particular column. |
 | `getColumnIcon` | `(column: Column) => Component` | Gets the icon for a particular column. |
 | `getColumnSize` | `(column: Column) => number` | Get column width. |
 | `setColumnSize` | `(column: Column, width: number) => void` | Set column width. |
 | `resetColumnSize` | `(column: Column) => void` | Reset column width. |
 | `getColumnName` | `(column: Column) => string` | Get column name. |
 | `setColumnName` | `(column: Column, name: string) => void` | Set column name. |
-| `insertColumns` | `(index: number, count: number) => void` | Insert columns. |
-| `insertRows` | `(index: number, count: number) => void` | Insert rows. |
-| `removeColumns` | `(index: number, count: number) => void` | Remove columns. |
-| `removeRows` | `(index: number, count: number) => void` | Remove rows. |
+| `onInsertColumns` | `(index: number, count: number) => void` | Insert columns. |
+| `onInsertRows` | `(index: number, count: number) => void` | Insert rows. |
 | `onViewportChanged` | `(start: number, end: number) => void` | Called whenever the range of rows visible in the viewport changes. |
 | `onCellContextMenu` | `(ev: MouseEvent, row: number, column: Column) => void` | Fired when a cell context menu is opened. |
 | `onCopy` | `(min: CellIndex, max: CellIndex) => void` | Called when cells are copied. |

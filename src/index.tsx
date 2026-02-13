@@ -1,5 +1,3 @@
-import Table from 'src/table/Table'
-import type { ActiveRange } from 'src/table/types'
-import { createTextContent, createCheckboxContent } from './components/CellContent'
-
-export { Table, ActiveRange, createTextContent, createCheckboxContent }
+export { Table } from 'src/table/Table'
+export type { ActiveRange } from 'src/table/types'
+export { createTextContent, createCheckboxContent } from './components/CellContent'

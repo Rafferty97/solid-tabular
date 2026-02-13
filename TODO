@@ -1,4 +1,4 @@
-- Generalise `setCellValue` to range of cells
+- Events
+  - Generalise `setCellValue` to range of cells
 - Extract out context menu
-- Lift cell component to top level?
 - Column auto-sizing
