@@ -1,4 +1,6 @@
-- Events
+- Events API
   - Generalise `setCellValue` to range of cells
 - Extract out context menu
 - Column auto-sizing
+- Remove tanstack dependency
+- Default reducer that handles column sizes, data edits, etc.
