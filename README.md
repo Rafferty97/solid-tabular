@@ -88,6 +88,8 @@ The `Table` component is the main entry point, and has two generic type paramete
 | `columnsEditable` | `boolean` | Enables column operations (insert/delete/rename). |
 | `rowsEditable` | `boolean` | Enables row operations (insert/delete). |
 | `cellHeight` | `number` | Height of cells in pixels (default: 29). |
+| `cellContent` | `(column: Column) => Component<CellContentProps<Value>>` | Component used to render the content of cells for a particular column. |
+| `getColumnIcon` | `(column: Column) => Component` | Gets the icon for a particular column. |
 | `getColumnSize` | `(column: Column) => number` | Get column width. |
 | `setColumnSize` | `(column: Column, width: number) => void` | Set column width. |
 | `resetColumnSize` | `(column: Column) => void` | Reset column width. |
@@ -97,9 +99,13 @@ The `Table` component is the main entry point, and has two generic type paramete
 | `insertRows` | `(index: number, count: number) => void` | Insert rows. |
 | `removeColumns` | `(index: number, count: number) => void` | Remove columns. |
 | `removeRows` | `(index: number, count: number) => void` | Remove rows. |
+| `onViewportChanged` | `(start: number, end: number) => void` | Called whenever the range of rows visible in the viewport changes. |
+| `onCellContextMenu` | `(ev: MouseEvent, row: number, column: Column) => void` | Fired when a cell context menu is opened. |
 | `onCopy` | `(min: CellIndex, max: CellIndex) => void` | Called when cells are copied. |
 | `onPaste` | `(min: CellIndex, max: CellIndex) => void` | Called when cells are pasted. |
 | `onClear` | `(min: CellIndex, max: CellIndex) => void` | Called when cells are cleared (delete key). |
+| `initialScrollPosition` | `{ left: number; top: number }` | Initial scroll position to restore. |
+| `onScrollPositionChange` | `(scrollLeft: number, scrollTop: number) => void` | Called when the table scroll position changes. |
 
 ### Theming
 
