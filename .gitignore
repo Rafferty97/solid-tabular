@@ -7,3 +7,5 @@ tsup.config.bundled_*.{m,c,}s
 
 *storybook.log
 storybook-static
+
+local
