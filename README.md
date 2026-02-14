@@ -38,7 +38,30 @@ yarn add solid-tabular
 
 ## Basic Usage
 
-The example below shows how to display a static data table with default column widths.
+The example below shows how to display a static data table using the `createTableState` utility function.
+
+```tsx
+import { Table, createTableState } from 'solid-tabular'
+import 'solid-tabular/styles.css'
+
+function App() {
+  const tableProps = createTableState([
+    { A: 1, B: 2, C: 3 },
+    { A: 4, B: 5, C: 6 },
+    { A: 7, B: 8, C: 9 },
+  ])
+
+  return (
+    <div style={{ width: '100%', padding: '20px' }}>
+      <Table {...tableProps} columnsResizeable />
+    </div>
+  )
+}
+
+export default App
+```
+
+This example controls the table data explicitly for more control.
 
 ```tsx
 import { createSignal } from 'solid-js'
@@ -57,7 +80,7 @@ function App() {
   ])
 
   return (
-    <div style={{ height: '500px' }}>
+    <div style={{ width: '100%', padding: '20px' }}>
       <Table
         columns={columns}
         numRows={data().length}
